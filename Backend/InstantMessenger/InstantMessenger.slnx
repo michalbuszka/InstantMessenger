@@ -1,7 +1,7 @@
 <Solution>
-  <Project Path="API/API.csproj" />
-  <Project Path="Application/Application.csproj" />
-  <Project Path="Domain/Domain.csproj" />
-  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="API/InstantMessenger.API.csproj" />
+  <Project Path="Application/InstantMessenger.Application.csproj" />
+  <Project Path="Domain/InstantMessenger.Domain.csproj" />
+  <Project Path="Infrastructure/InstantMessenger.Infrastructure.csproj" />
   <Project Path="InstantMessenger/InstantMessenger.csproj" />
 </Solution>
