@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace InstantMessenger.Domain.Entities
 {
-    public class User
+    public class Conversation
     {
         [Key]
-        public Guid Id { get; set; } 
-        public string Nick { get; set; }
+        public int Id { get; set; }
+
+        public List<Message> Messages { get; set; } = new();
         public List<ConversationUser> ConversationUsers { get; set; } = new();
     }
 }

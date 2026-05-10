@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+
+namespace InstantMessenger.Domain.Entities
+{
+    public class ConversationUser
+    {
+        [Key]
+        public Guid Id { get; set; }
+        public Guid UserId { get { return User.Id; } }
+        public string Nick { get; set; }
+        public User User { get; set; }
+        public Conversation Conversation { get; set; }
+        public int ConversationId { get; set; }
+        public ConversationUser (User user)
+        {
+            this.User = user;
+            this.Nick = user.Nick;
+        }
+    }
+}
