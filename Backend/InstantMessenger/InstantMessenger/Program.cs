@@ -1,6 +1,8 @@
 using InstantMessenger.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
+using InstantMessenger.Application.Services;
+using InstantMessenger.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         b => b.MigrationsAssembly("InstantMessenger.Infrastructure") 
     );
 });
+
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserRepository>();
 
 var app = builder.Build();
 

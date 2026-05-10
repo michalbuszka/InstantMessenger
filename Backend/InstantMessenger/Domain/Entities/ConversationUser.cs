@@ -14,10 +14,5 @@ namespace InstantMessenger.Domain.Entities
         public User User { get; set; }
         public Conversation Conversation { get; set; }
         public int ConversationId { get; set; }
-        public ConversationUser (User user)
-        {
-            this.User = user;
-            this.Nick = user.Nick;
-        }
     }
 }
