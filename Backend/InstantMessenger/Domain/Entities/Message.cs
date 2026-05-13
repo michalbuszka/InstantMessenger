@@ -9,12 +9,11 @@ namespace InstantMessenger.Domain.Entities
     {
         [Key] 
         public int Id { get; set; }
-        public int SenderId { get; set; }
-
+        public Guid SenderId { get; set; }
         public int ConversationId { get; set; }
         public string Content { get; set; } = string.Empty;
-        public ConversationUser? Sender { get; set; }
-        public Conversation Conversation { get; set; }
+        public required ConversationUser Sender { get; set; }
+        public required Conversation Conversation { get; set; }
         public List<Reaction> Reactions { get; set; } = new();
     }
 }

@@ -10,8 +10,7 @@ namespace InstantMessenger.Application.Mappers
     {
         public static User createUser (AddUserDTO addUserDTO)
         {
-            User user = new User();
-            user.Nick = addUserDTO.Nick;
+            User user = new User { Nick = addUserDTO.Nick };
             return user;
         }
     }

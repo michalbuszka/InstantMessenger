@@ -13,9 +13,11 @@ namespace InstantMessenger.Infrastructure
         {
             
         }
-        public DbSet<User> Users;
-        public DbSet<Conversation> Conversations;
-        public DbSet<Message> Messages;
+
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<Message> Messages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasKey(u => u.Id);
