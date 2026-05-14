@@ -13,9 +13,9 @@ namespace InstantMessenger.Application.Services
         {
             _userRepository = userRepository;
         }
-        public async Task AddUserAsync(string nick)
+        public async Task AddUserAsync(string username)
         {
-            AddUserDTO addUserDTO = new AddUserDTO(nick);
+            AddUserDTO addUserDTO = new AddUserDTO(username);
             await _userRepository.AddUserAsync(UserMapper.createUser(addUserDTO));
         }
         public async Task<User?> GetUserById(Guid id)

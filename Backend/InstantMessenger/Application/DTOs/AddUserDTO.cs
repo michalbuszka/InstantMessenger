@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace InstantMessenger.Application.DTOs
+﻿namespace InstantMessenger.Application.DTOs
 {
-    public record AddUserDTO(string Nick);
+    public record AddUserDTO(string Username);
 }

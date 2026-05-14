@@ -9,7 +9,7 @@ namespace InstantMessenger.Domain.Entities
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
-        public required string Nick { get; set; }
+        public required string Username { get; set; } 
         public List<ConversationUser> ConversationUsers { get; set; } = new();
     }
 }
