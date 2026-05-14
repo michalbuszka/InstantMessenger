@@ -9,9 +9,9 @@ namespace InstantMessenger.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
-        public required int MessageId { get; set; }
-        public required Message Message { get; set; }
-        public required User Sender { get; set; }
-        public string Emoji { get; set; } = string.Empty;
+        public int MessageId { get; set; }
+        public Message Message { get; set; }
+        public User Sender { get; set; }
+        public string Emoji { get; set; }
     }
 }

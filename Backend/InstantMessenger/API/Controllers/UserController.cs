@@ -13,9 +13,9 @@ namespace InstantMessenger.API.Controllers
             this.userService = userService;
         }
         [HttpGet("{nick}")]
-        public async Task<IActionResult> AddUser(string username)
+        public async Task<IActionResult> AddUser(string username, string password)
         {
-            await userService.AddUserAsync(username);
+            await userService.AddUserAsync(username, password);
             return Ok();
         }
     }

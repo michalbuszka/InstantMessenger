@@ -12,7 +12,7 @@ namespace InstantMessenger.Domain.Entities
         public Guid UserId { get; set; }
         public string Nick { get; set; }
         public User User { get; set; }
-        public required Conversation Conversation { get; set; }
+        public Conversation Conversation { get; set; }
         public int ConversationId { get; set; }
     }
 }

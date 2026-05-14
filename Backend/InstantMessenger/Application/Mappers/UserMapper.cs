@@ -5,9 +5,9 @@ namespace InstantMessenger.Application.Mappers
 {
     public static class UserMapper
     {
-        public static User createUser (AddUserDTO addUserDTO)
+        public static User createUser (RegisterRequestDTO registerRequestDto)
         {
-            User user = new User { Username = addUserDTO.Username };
+            User user = new User(registerRequestDto.Username, registerRequestDto.Password);
             return user;
         }
     }

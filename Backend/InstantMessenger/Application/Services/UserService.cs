@@ -12,10 +12,10 @@ namespace InstantMessenger.Application.Services
         {
             _userRepository = userRepository;
         }
-        public async Task AddUserAsync(string username)
+        public async Task AddUserAsync(string username, string password)
         {
-            AddUserDTO addUserDTO = new AddUserDTO(username);
-            await _userRepository.AddUserAsync(UserMapper.createUser(addUserDTO));
+            RegisterRequestDTO registerRequestDto = new RegisterRequestDTO(username, password);
+            await _userRepository.AddUserAsync(UserMapper.createUser(registerRequestDto));
         }
         public async Task<User?> GetUserById(Guid id)
         {

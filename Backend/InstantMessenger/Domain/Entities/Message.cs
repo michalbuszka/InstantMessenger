@@ -11,9 +11,9 @@ namespace InstantMessenger.Domain.Entities
         public int Id { get; set; }
         public Guid SenderId { get; set; }
         public int ConversationId { get; set; }
-        public string Content { get; set; } = string.Empty;
-        public required ConversationUser Sender { get; set; }
-        public required Conversation Conversation { get; set; }
+        public string Content { get; set; } 
+        public ConversationUser Sender { get; set; }
+        public Conversation Conversation { get; set; }
         public List<Reaction> Reactions { get; set; } = new();
     }
 }
