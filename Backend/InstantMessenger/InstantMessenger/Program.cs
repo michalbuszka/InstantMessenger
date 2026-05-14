@@ -1,6 +1,6 @@
 using InstantMessenger.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
+
 using InstantMessenger.Application.Services;
 using InstantMessenger.Infrastructure.Repositories;
 
