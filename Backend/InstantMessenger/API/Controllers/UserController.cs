@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using InstantMessenger.Application.Services;
+﻿using InstantMessenger.Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace InstantMessenger.API.Controllers
 {

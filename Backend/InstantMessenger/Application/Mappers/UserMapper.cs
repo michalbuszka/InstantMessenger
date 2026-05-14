@@ -1,8 +1,5 @@
 ﻿using InstantMessenger.Application.DTOs;
 using InstantMessenger.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace InstantMessenger.Application.Mappers
 {
@@ -10,7 +7,7 @@ namespace InstantMessenger.Application.Mappers
     {
         public static User createUser (AddUserDTO addUserDTO)
         {
-            User user = new User { Username = addUserDTO.username };
+            User user = new User { Username = addUserDTO.Username };
             return user;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using InstantMessenger.Application.DTOs;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Domain.Entities;
-using InstantMessenger.Infrastructure;
 using InstantMessenger.Infrastructure.Repositories;
 
 namespace InstantMessenger.Application.Services
