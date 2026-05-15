@@ -1,6 +1,6 @@
-﻿using InstantMessenger.Application.DTOs;
-using InstantMessenger.Application.Services;
+﻿using InstantMessenger.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using RegisterRequest = InstantMessenger.Application.DTOs.LoginRegister.RegisterRequest;
 
 namespace InstantMessenger.API.Controllers
 {
@@ -14,10 +14,10 @@ namespace InstantMessenger.API.Controllers
             this.userService = userService;
         }
         [HttpPost]
-        public async Task<IActionResult> register([FromBody] RegisterRequestDTO registerRequestDTO)
+        public async Task<IActionResult> register([FromBody]  RegisterRequest registerLogin)
         {
-            await userService.AddUserAsync(registerRequestDTO.Username, registerRequestDTO.Password);
-            return Ok();
+            var response = await userService.AddUserAsync(registerLogin.Username, registerLogin.Password);
+            return Ok(response);
         }
     }
 }

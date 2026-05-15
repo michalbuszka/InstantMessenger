@@ -48,6 +48,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 

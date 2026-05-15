@@ -7,41 +7,28 @@ using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using InstantMessenger.Application.DTOs.LoginRegister;
 
 namespace InstantMessenger.Application.Services
 {
     public class UserService
     {
         private readonly UserRepository _userRepository;
-        private readonly IConfiguration _configuration;
+        private readonly JwtService _jwtService;
 
-        public UserService(UserRepository userRepository,  IConfiguration configuration)
+        public UserService(UserRepository userRepository, JwtService jwtService)
         {
             _userRepository = userRepository;
-            _configuration = configuration;
+            _jwtService = jwtService;
         }
 
-        public async Task AddUserAsync(string username, string password)
+        public async Task<RegisterResponse> AddUserAsync(string username, string password)
         {
-            RegisterRequestDTO registerRequestDto = new RegisterRequestDTO(username, password);
-            var issuer = _configuration["JwtConfig:Issuer"]!;
-            var audience = _configuration["JwtConfig:Audience"];
-            var key = _configuration["JwtConfig:Key"];
-            var tokenValidityMins = _configuration["JwtConfig:TokenValidityMins"];
-            var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(Convert.ToDouble(tokenValidityMins));
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
-                Expires = tokenExpiryTimeStamp,
-                Audience = audience,
-                SigningCredentials = new SigningCredentials
-                (new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            await _userRepository.AddUserAsync(UserMapper.createUser(registerRequestDto));
+            RegisterRequest registerRequest = new (username, password);
+            string[] messages = new string[10];
+            await _userRepository.AddUserAsync(UserMapper.createUser(registerRequest));
+            RegisterResponse registerResponse = new (0, messages, _jwtService.GenerateToken(username));
+            return registerResponse;
         }
 
         public async Task<User?> GetUserById(Guid id)
