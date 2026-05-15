@@ -12,6 +12,11 @@ namespace InstantMessenger.Domain.Entities
         public string PasswordHash { get; set; }
         public List<ConversationUser> ConversationUsers { get; set; } = new();
 
+        public User()
+        {
+            
+        }
+
         public User(string username, string password)
         {
             Username = username;
