@@ -37,7 +37,7 @@ function Login () {
     
                 if (data.status == 0) {
                     saveToken(data.token);
-                    window.location.href = '/home';
+                    window.location.href = '/';
                 }
             } catch (error) {
                 console.error(error);
@@ -48,7 +48,7 @@ function Login () {
         useEffect(() => {
             const token = localStorage.getItem('token');
             if (token) {
-                window.location.href = '/home';
+                window.location.href = '/';
             }
         }, []);
     return (
