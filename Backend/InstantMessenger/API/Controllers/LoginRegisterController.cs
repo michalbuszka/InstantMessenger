@@ -6,10 +6,10 @@ namespace InstantMessenger.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginRegisterController : ControllerBase
     {
         private readonly UserService userService;
-        public LoginController (UserService userService)
+        public LoginRegisterController (UserService userService)
         {
             this.userService = userService;
         }
