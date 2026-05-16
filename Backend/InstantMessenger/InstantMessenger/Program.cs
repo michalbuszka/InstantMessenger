@@ -2,6 +2,7 @@ using System.Text;
 using InstantMessenger.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using InstantMessenger.Application.Services;
+using InstantMessenger.Application.Validators;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,6 +53,7 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<RegisterValidator>();
 
 var app = builder.Build();
 
