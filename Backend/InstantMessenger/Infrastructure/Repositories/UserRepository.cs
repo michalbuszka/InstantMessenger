@@ -27,5 +27,10 @@ namespace InstantMessenger.Infrastructure.Repositories
         {
             return !_appDbContext.Users.Any(u => u.Username == username);
         }
+        
+        public async Task<User?> GetUserByUsername(string username)
+        {
+            return await _appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
     }
 }

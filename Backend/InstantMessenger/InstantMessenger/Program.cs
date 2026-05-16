@@ -54,6 +54,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<RegisterValidator>();
+builder.Services.AddScoped<LoginValidator>();
 
 var app = builder.Build();
 
