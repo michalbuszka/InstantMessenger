@@ -43,9 +43,9 @@ namespace InstantMessenger.Application.Services
                 loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
                 return loginRegisterResponse;
             }
-
-            var passwordHash = _passwordHasher.HashPassword(null!, registerRequest.Password);
-            var user = UserMapper.createUser(registerRequest, passwordHash);
+            var user = UserMapper.createUser(registerRequest, string.Empty);
+            var passwordHash = _passwordHasher.HashPassword(user, registerRequest.Password);
+            user.PasswordHash = passwordHash;   
             await _userRepository.AddUserAsync(user);
             loginRegisterResponse = new(0, messages.ToArray(), _jwtService.GenerateToken(registerRequest.Username));
             return loginRegisterResponse;
@@ -71,7 +71,7 @@ namespace InstantMessenger.Application.Services
             }
 
             var user = await _userRepository.GetUserByUsername(loginRequest.Username);
-            if (user == null || _passwordHasher.VerifyHashedPassword(null!, user.PasswordHash, loginRequest.Password) !=
+            if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequest.Password) !=
                 PasswordVerificationResult.Success)
             {
                 messages.Add("Invalid username or password.");
