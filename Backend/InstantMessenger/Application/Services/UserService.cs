@@ -2,6 +2,7 @@
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace InstantMessenger.Application.Services
 {
@@ -9,27 +10,30 @@ namespace InstantMessenger.Application.Services
     {
         private readonly UserRepository _userRepository;
         private readonly JwtService _jwtService;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserService(UserRepository userRepository, JwtService jwtService)
+        public UserService(UserRepository userRepository, JwtService jwtService, IPasswordHasher<User> passwordHasher)
         {
             _userRepository = userRepository;
             _jwtService = jwtService;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<RegisterResponse> AddUserAsync(string username, string password)
         {
-            string[] messages = { };
+            List<string> messages = new List<string>();
             RegisterResponse registerResponse;
             if (!await _userRepository.IsUsernameAvailable(username))
             {
-                messages = new[] { "Username is already taken." };
-                registerResponse = new(1, messages, string.Empty);
+                messages.Add("Username is already taken");
+                registerResponse = new(1, messages.ToArray(), string.Empty);
                 return registerResponse;
             }
-
             RegisterRequest registerRequest = new(username, password);
-            await _userRepository.AddUserAsync(UserMapper.createUser(registerRequest));
-            registerResponse = new(0, messages, _jwtService.GenerateToken(username));
+            var passwordHash = _passwordHasher.HashPassword(null!, password);
+            var user = UserMapper.createUser(registerRequest, passwordHash);
+            await _userRepository.AddUserAsync(user);
+            registerResponse = new(0, messages.ToArray(), _jwtService.GenerateToken(username));
             return registerResponse;
         }
 

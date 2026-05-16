@@ -2,8 +2,10 @@ using System.Text;
 using InstantMessenger.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using InstantMessenger.Application.Services;
+using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,8 +49,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 var app = builder.Build();
 
