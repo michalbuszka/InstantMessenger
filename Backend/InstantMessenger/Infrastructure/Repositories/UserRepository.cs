@@ -22,5 +22,10 @@ namespace InstantMessenger.Infrastructure.Repositories
             _appDbContext.Users.Add(user);
             await _appDbContext.SaveChangesAsync();
         }
+        
+        public async Task<bool> IsUsernameAvailable(string username)
+        {
+            return !_appDbContext.Users.Any(u => u.Username == username);
+        }
     }
 }

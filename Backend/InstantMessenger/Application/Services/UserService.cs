@@ -1,13 +1,7 @@
-﻿using System.Security.Claims;
-using System.Text;
-using InstantMessenger.Application.DTOs;
+﻿using InstantMessenger.Application.DTOs.LoginRegister;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using InstantMessenger.Application.DTOs.LoginRegister;
 
 namespace InstantMessenger.Application.Services
 {
@@ -24,10 +18,18 @@ namespace InstantMessenger.Application.Services
 
         public async Task<RegisterResponse> AddUserAsync(string username, string password)
         {
-            RegisterRequest registerRequest = new (username, password);
-            string[] messages = new string[10];
+            string[] messages = { };
+            RegisterResponse registerResponse;
+            if (!await _userRepository.IsUsernameAvailable(username))
+            {
+                messages = new[] { "Username is already taken." };
+                registerResponse = new(1, messages, string.Empty);
+                return registerResponse;
+            }
+
+            RegisterRequest registerRequest = new(username, password);
             await _userRepository.AddUserAsync(UserMapper.createUser(registerRequest));
-            RegisterResponse registerResponse = new (0, messages, _jwtService.GenerateToken(username));
+            registerResponse = new(0, messages, _jwtService.GenerateToken(username));
             return registerResponse;
         }
 
