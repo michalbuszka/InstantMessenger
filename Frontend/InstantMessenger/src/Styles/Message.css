@@ -1,0 +1,37 @@
+.message 
+{
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    word-break: break-all;
+}
+
+.messageContent
+{
+    text-align: center;
+    background-color: red;
+    padding: 8px;
+    font-size: 12px;
+    color: white;
+    border-radius: 10px;
+}
+
+.messageAuthor
+{
+    padding-left: 5px;
+    font-size: 8px;
+}
+
+.myMessage 
+{
+    background-color: green;
+}
+
+.theirMessage 
+{
+    background-color: red;
+}
+
+p {
+    font-size: 11px;
+}

@@ -1,5 +1,6 @@
 .conversation
 {
+    width: 100%;
     display: grid;
     grid-template-rows: 1fr auto;
     background-color: #ffffff;
@@ -11,4 +12,12 @@
     display: grid;
     gap: 10px;
     grid-template-columns: 8fr 1fr;
+}
+
+.messages
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
