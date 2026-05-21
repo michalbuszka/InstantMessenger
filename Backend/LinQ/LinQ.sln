@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinQ", "LinQ\LinQ.csproj", "{47CD2C66-21A8-42FB-959F-6CE435F66F9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{FB0EA383-EBED-48F9-8148-9D2834B42DB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47CD2C66-21A8-42FB-959F-6CE435F66F9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47CD2C66-21A8-42FB-959F-6CE435F66F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47CD2C66-21A8-42FB-959F-6CE435F66F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47CD2C66-21A8-42FB-959F-6CE435F66F9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB0EA383-EBED-48F9-8148-9D2834B42DB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB0EA383-EBED-48F9-8148-9D2834B42DB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB0EA383-EBED-48F9-8148-9D2834B42DB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB0EA383-EBED-48F9-8148-9D2834B42DB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -28,7 +28,7 @@ public class JwtService
             Expires = tokenExpiryTimeStamp,
             Audience = audience,
             SigningCredentials = new SigningCredentials
-            (new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+            (new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)),
                 SecurityAlgorithms.HmacSha256Signature)
         };
         var tokenHandler = new JwtSecurityTokenHandler();
