@@ -1,4 +1,7 @@
 import { useEffect } from "react"
+import ConversationsList from "../components/ConversationList"
+import Conversation from "../components/Conversation"
+import FriendDetails from "../components/FriendDetails"
 import '../Styles/Global.css'
 import '../Styles/Conversations.css'
 
@@ -12,20 +15,11 @@ function Conversations() {
     }, []);
     return (
         <div className="messengerContainer">
-            <div className="conversationsList">
-                <input type="text" placeholder="Search conversations..." />
-            </div>
-            <div className="conversation">
-                <div className="messages"></div>
-                <div className="messageType">
-                    <input type="text" placeholder="Type a message..." />
-                    <button>Send</button>
-                </div>
-            </div>
-            <div className="friendDetails"></div>
-                
+            <ConversationsList />
+            <Conversation />
+            <FriendDetails />
         </div>
     )
 }
 
-export default Conversations
+export default Conversations;

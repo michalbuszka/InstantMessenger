@@ -1,0 +1,50 @@
+.conversationList
+{
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.searchConversations
+{
+    height: 30px;
+}
+
+.userSettings
+{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+.profileList
+{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.profilePicture
+{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+}

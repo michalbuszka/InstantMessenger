@@ -4,35 +4,6 @@
     grid-template-columns: 1fr 3fr 1fr;
     height: 100vh;
     width: 100vw;
+    flex-wrap: wrap;
 }
 
-.conversationsList
-{
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    border-right: 1px solid #e0e0e0;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.conversation
-{
-    display: grid;
-    grid-template-rows: 9fr 1fr;
-    background-color: #ffffff;
-    padding: 20px;
-}
-
-.messageType
-{
-    display: grid;
-    gap: 10px;
-    grid-template-columns: 8fr 2fr;
-}
-
-.friendDetails
-{
-    background-color: #720a0a;
-    padding: 20px;
-}

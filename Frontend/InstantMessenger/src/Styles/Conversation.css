@@ -1,0 +1,14 @@
+.conversation
+{
+    display: grid;
+    grid-template-rows: 1fr auto;
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.messageType
+{
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 8fr 1fr;
+}
