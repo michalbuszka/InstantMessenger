@@ -7,3 +7,23 @@
     flex-wrap: wrap;
 }
 
+.leftPanel 
+{
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+
+.userSettings
+{
+    padding: 10px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}

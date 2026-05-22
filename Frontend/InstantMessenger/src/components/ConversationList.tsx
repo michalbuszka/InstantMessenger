@@ -1,11 +1,9 @@
 import '../Styles/Global.css'
 import '../Styles/ConversationList.css'
+import { useState } from 'react';
+import UserSettingsModal from '../modals/UserSettingsModal';
 
 function ConversationsList() {
-    const logout = () => {
-        localStorage.removeItem('token');
-        window.location.href = '/login';
-    }
     return (
         <div className="conversationList">
             <input type="text" placeholder="Search conversations..." className="searchConversations" />
@@ -16,10 +14,6 @@ function ConversationsList() {
                     </div>
                     <b>Michał Buszka</b>
                 </div>
-            </div>
-            <div className="userSettings">
-                <button>Settings</button>
-                <button onClick={() => {logout()}}>Logout</button>
             </div>
         </div>
     );
