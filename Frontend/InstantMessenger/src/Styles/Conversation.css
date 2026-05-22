@@ -2,13 +2,13 @@
 {
     width: 100%;
     display: grid;
-    grid-template-rows: 1fr auto;
+    grid-template-rows: auto 1fr auto;
     background-color: #ffffff;
-    padding: 20px;
 }
 
 .messageType
 {
+    padding: 10px;
     display: grid;
     gap: 10px;
     grid-template-columns: 8fr 1fr;
@@ -16,8 +16,15 @@
 
 .messages
 {
+    padding: 10px;
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+.conversationHeader
+{
+    padding: 10px;
+    background-color: aliceblue;
 }

@@ -4,7 +4,8 @@ interface messageProps
 {
     sender: string,
     content: string,
-    messageClass: string
+    messageClass: string,
+    date: string
 }
 
 function Message (props: messageProps) {
@@ -14,7 +15,7 @@ function Message (props: messageProps) {
         return "flex-end"
     }
     return (
-    <div className="message" style={{alignSelf: getMessageAlign(props.messageClass)}}>
+    <div className="message" style={{alignSelf: getMessageAlign(props.messageClass)}}  title={props.date}>
         <p className="messageAuthor">{props.sender}</p>
         <span className={"messageContent" + " " + props.messageClass}>{props.content}</span>
     </div>)
