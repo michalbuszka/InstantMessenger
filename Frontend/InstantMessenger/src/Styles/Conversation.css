@@ -26,5 +26,5 @@
 .conversationHeader
 {
     padding: 10px;
-    background-color: aliceblue;
+    border-bottom: 1px solid #ccc; /* Opcjonalna ramka */
 }

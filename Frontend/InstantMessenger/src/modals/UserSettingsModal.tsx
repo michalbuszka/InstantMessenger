@@ -42,7 +42,7 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
     return ReactDOM.createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="userSettingsModal" onClick={(e) => e.stopPropagation()}>
-                <h3>Ustawienia użytkownika</h3>
+                <h3>User settings</h3>
                 
                 <div className="form-group">
                     <input 
@@ -76,11 +76,11 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
                     value={formData.email} 
                     onChange={handleChange} 
                 />
-
+                <label>Avatar img:</label>
                 <input 
-                    type="text" 
+                    type="file" 
                     name="avatar" 
-                    placeholder="URL Avatara" 
+                    placeholder="Avatar" 
                     value={formData.avatar} 
                     onChange={handleChange} 
                 />
