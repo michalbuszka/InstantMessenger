@@ -1,9 +1,14 @@
-﻿using InstantMessenger.Application.DTOs.LoginRegister;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using InstantMessenger.Application.DTOs;
+using InstantMessenger.Application.DTOs.LoginRegister;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Application.Validators;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InstantMessenger.Application.Services
 {
@@ -37,13 +42,13 @@ namespace InstantMessenger.Application.Services
                 return loginRegisterResponse;
             }
 
-            if (!await _userRepository.IsUsernameAvailable(registerRequest.Username))
+            if (!await _userRepository.IsUsernameAvailableAsync(registerRequest.Username))
             {
                 messages.Add("Username is already taken");
                 loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
                 return loginRegisterResponse;
             }
-            var user = UserMapper.createUser(registerRequest, string.Empty);
+            var user = UserMapper.CreateUser(registerRequest, string.Empty);
             var passwordHash = _passwordHasher.HashPassword(user, registerRequest.Password);
             user.PasswordHash = passwordHash;   
             await _userRepository.AddUserAsync(user);
@@ -63,14 +68,14 @@ namespace InstantMessenger.Application.Services
                 return loginRegisterResponse;
             }
 
-            if (await _userRepository.IsUsernameAvailable(loginRequest.Username))
+            if (await _userRepository.IsUsernameAvailableAsync(loginRequest.Username))
             {
                 messages.Add("Invalid username or password.");
                 loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
                 return loginRegisterResponse;
             }
 
-            var user = await _userRepository.GetUserByUsername(loginRequest.Username);
+            var user = await _userRepository.GetUserByUsernameAsync(loginRequest.Username);
             if (user == null || _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequest.Password) !=
                 PasswordVerificationResult.Success)
             {
@@ -82,5 +87,24 @@ namespace InstantMessenger.Application.Services
             loginRegisterResponse = new(0, messages.ToArray(), _jwtService.GenerateToken(loginRequest.Username));
             return loginRegisterResponse;
         }
+
+        public async Task<bool> UpdateUserDataAsync(string? username, UserDTO.UserSettingsDTO userSettings)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            if (user == null)
+                return false;
+            UserMapper.UpdateUser(user, userSettings);
+            await _userRepository.SaveUserAsync();
+            return true;    
+        }
+        
+        public async Task<UserDTO.UserSettingsDTO?> GetUserDataAsync(string? username)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            if (user == null)
+                return null;
+            return new UserDTO.UserSettingsDTO(user.Email, user.FirstName, user.LastName, user.Nick, user.Avatar);
+        }
+        
     }
 }

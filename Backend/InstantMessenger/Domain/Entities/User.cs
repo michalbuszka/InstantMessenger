@@ -6,18 +6,12 @@ namespace InstantMessenger.Domain.Entities
     {
         [Key] public Guid Id { get; set; } = Guid.NewGuid();
         public string Username { get; set; }
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Nick { get; set; }
+        public string Avatar { get; set; }
         public string PasswordHash { get; set; }
-        public List<ConversationUser> ConversationUsers { get; set; } = new();
-
-        public User()
-        {
-            
-        }
-
-        public User(string username, string password)
-        {
-            Username = username;
-            PasswordHash = password;
-        }
+        public List<ConversationUser> ConversationUsers { get; set; } = [];
     }
 }

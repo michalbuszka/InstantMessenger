@@ -23,14 +23,19 @@ namespace InstantMessenger.Infrastructure.Repositories
             await _appDbContext.SaveChangesAsync();
         }
         
-        public async Task<bool> IsUsernameAvailable(string username)
+        public async Task<bool> IsUsernameAvailableAsync(string username)
         {
             return !_appDbContext.Users.Any(u => u.Username == username);
         }
         
-        public async Task<User?> GetUserByUsername(string username)
+        public async Task<User?> GetUserByUsernameAsync(string? username)
         {
             return await _appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
+        
+        public async Task SaveUserAsync()
+        {
+            await _appDbContext.SaveChangesAsync();
         }
     }
 }
