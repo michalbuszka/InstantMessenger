@@ -1,10 +1,10 @@
-import React, { useState, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
+import type { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
 import '../Styles/UserSettingsModal.css';
 
 export interface UserData {
     email: string;
-    password?: string; // Hasło jest opcjonalne przy edycji
     firstName: string;
     lastName: string;
     nick: string;
@@ -19,7 +19,8 @@ interface UserSettingsModalProps {
 }
 
 function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSettingsModalProps) {
-    // Inicjalizacja stanu danymi początkowymi lub pustymi wartościami
+    if (!isOpen) return null;
+
     const [formData, setFormData] = useState<UserData>(initialData || {
         email: '',
         firstName: '',
@@ -28,39 +29,75 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
         avatar: ''
     });
 
-    if (!isOpen) return null;
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        const { name, value, type, files } = e.target;
+        if (type === 'file' && files && files[0]) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const base64String = reader.result as string;
+                setFormData(prev => ({ ...prev, [name]: base64String }));
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSave = () => {
         onSave(formData);
     };
 
+    const getData = async (token : string) => {
+        const response = await fetch('api/User/getUserData', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        });
+        const data = await response.json();
+                console.log(data);
+        setFormData(prev => ({
+            ...prev,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            nick: data.nick
+        }));
+    }
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        getData(token);
+    }, []);
+
     return ReactDOM.createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="userSettingsModal" onClick={(e) => e.stopPropagation()}>
                 <h3>User settings</h3>
                 
-                <div className="form-group">
-                    <input 
-                        type="text" 
-                        name="firstName" 
-                        placeholder="Imię" 
-                        value={formData.firstName} 
-                        onChange={handleChange} 
-                    />
-                    <input 
-                        type="text" 
-                        name="lastName" 
-                        placeholder="Nazwisko" 
-                        value={formData.lastName} 
-                        onChange={handleChange} 
-                    />
-                </div>
-
+                <label htmlFor="firstName">Imię</label>
+                <input 
+                    type="text" 
+                    name="firstName" 
+                    placeholder="Imię" 
+                    value={formData.firstName} 
+                    onChange={handleChange} 
+                />
+                <label htmlFor="lastName">Nazwisko</label>
+                <input 
+                    type="text" 
+                    name="lastName" 
+                    placeholder="Nazwisko" 
+                    value={formData.lastName} 
+                    onChange={handleChange} 
+                />
+                <label htmlFor="nick">Nick</label>
                 <input 
                     type="text" 
                     name="nick" 
@@ -68,7 +105,7 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
                     value={formData.nick} 
                     onChange={handleChange} 
                 />
-
+                <label htmlFor="email">Email</label>
                 <input 
                     type="email" 
                     name="email" 
@@ -76,12 +113,11 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
                     value={formData.email} 
                     onChange={handleChange} 
                 />
-                <label>Avatar img:</label>
+                <label htmlFor='avatar'>Avatar img:</label>
                 <input 
                     type="file" 
                     name="avatar" 
                     placeholder="Avatar" 
-                    value={formData.avatar} 
                     onChange={handleChange} 
                 />
 

@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from 'react'
 
 function Register () {
     const [messages, setMessages] = useState<string[]>([]);
+    const nickRef = useRef<HTMLInputElement>(null);
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -20,6 +21,7 @@ function Register () {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
+                    nick: nickRef.current?.value,
                     username: usernameRef.current?.value,
                     password: passwordRef.current?.value
                 })
@@ -37,7 +39,7 @@ function Register () {
 
             if (data.status == 0) {
                 saveToken(data.token);
-                window.location.href = '/home';
+                window.location.href = '/conversations';
             }
         } catch (error) {
             console.error(error);
@@ -57,6 +59,7 @@ function Register () {
             <div className='login'>
                 <h1>Register</h1>
                 <input type="text" placeholder='Username' ref={usernameRef} />
+                <input type="text" placeholder='Nick' ref={nickRef} />
                 <input type="password" placeholder='Password' ref={passwordRef} />
                 <a href='/login'>Already have an account? Login</a>
                 <div className='errorMessages'>

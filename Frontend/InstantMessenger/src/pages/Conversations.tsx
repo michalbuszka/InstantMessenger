@@ -10,17 +10,24 @@ import UserSettingsModal from "../modals/UserSettingsModal"
 function Conversations() {
     const [isUserSettingsModalOpen, setIsUserSettingsModalOpen] = useState(false);
     
-    const handleSaveSettings = (data: any) => {
-        console.log("Nowe dane użytkownika:", data);
-        setIsUserSettingsModalOpen(false); // Zamykamy po zapisie
-    };
-
-    useEffect(() => {
+    const handleSaveSettings = async (data: any) => {
         const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login';
+        if (token == null) {
+            alert("Błąd!");
+            return;
         }
-    }, []);
+        setIsUserSettingsModalOpen(false); 
+        var response = await fetch('/api/User/updateUserData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+        if (response.status == 200)
+            alert("Dane zostały zapisane!");
+    };
 
     const logout = () => {
         localStorage.removeItem('token');
