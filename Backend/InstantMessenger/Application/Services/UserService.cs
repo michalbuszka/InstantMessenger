@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using InstantMessenger.Application.DTOs;
+﻿using InstantMessenger.Application.DTOs;
 using InstantMessenger.Application.DTOs.LoginRegister;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Application.Validators;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace InstantMessenger.Application.Services
 {
