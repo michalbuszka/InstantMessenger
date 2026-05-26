@@ -1,3 +1,4 @@
+using System.Data;
 using FluentValidation;
 
 namespace InstantMessenger.Application.Validators;
@@ -10,6 +11,10 @@ public class RegisterValidator : AbstractValidator<DTOs.LoginRegister.RegisterRe
             .NotEmpty().WithMessage("Nazwa użytkownika jest wymagana")
             .MinimumLength(3).WithMessage("Nazwa użytkownika musi mieć min. 3 znaki")
             .MaximumLength(20).WithMessage("Nazwa użytkownika jest za długa");
+        
+        RuleFor(x => x.Nick).NotEmpty().WithMessage("Nick jest wymagany")
+        .MinimumLength(3).WithMessage("nick musi mieć min. 3 znaki")
+        .MaximumLength(20).WithMessage("nick jest za długi");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Hasło nie może być puste")

@@ -8,11 +8,10 @@ namespace InstantMessenger.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class UserController(JwtService jwtService, UserService userService) : ControllerBase
 {
     private readonly JwtService _jwtService = jwtService;
-
+    [Authorize]
     [HttpPost("updateUserData")]
     public async Task<IActionResult> UpdateUserData([FromBody] UserDTO.UserSettingsDTO userSettings)
     {
@@ -21,6 +20,7 @@ public class UserController(JwtService jwtService, UserService userService) : Co
             return Ok();
         return BadRequest();
     }   
+    [Authorize]
     [HttpGet("getUserData")]
     public async Task<IActionResult> GetUserData()
     {
@@ -29,6 +29,13 @@ public class UserController(JwtService jwtService, UserService userService) : Co
         if (data == null)
             return BadRequest();
         return Ok(data);
+    }  
+    [HttpGet("getUserContacts/{nickQuery}")]
+    public async Task<IActionResult> GetUserData(string? nickQuery)
+    {
+        if (nickQuery == null)
+            return BadRequest();
+        return Ok(await userService.GetUsersByNickQuery(nickQuery));
     }  
     
 }

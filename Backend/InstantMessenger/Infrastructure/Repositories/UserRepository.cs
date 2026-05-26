@@ -37,5 +37,12 @@ namespace InstantMessenger.Infrastructure.Repositories
         {
             await _appDbContext.SaveChangesAsync();
         }
+        
+        public async Task<List<User>> GetUserByNickQuery(string nickQuery)
+        {
+            return await _appDbContext.Users.Where(u => u.Nick.Contains(nickQuery)).ToListAsync();
+        }
+        
+        
     }
 }

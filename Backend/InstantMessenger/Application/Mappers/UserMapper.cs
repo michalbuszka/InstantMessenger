@@ -11,6 +11,7 @@ namespace InstantMessenger.Application.Mappers
             var user = new User()
             {
                 Username = registerRequest.Username,
+                Nick = registerRequest.Nick,
                 PasswordHash = passwordHash
             };
             return user;

@@ -8,4 +8,6 @@ public class UserDTO
         string? LastName,
         string? Nick,
         string? Avatar);
+    
+    public record ContactDTO(string Id, string nick, string login, string avatar);
 }
