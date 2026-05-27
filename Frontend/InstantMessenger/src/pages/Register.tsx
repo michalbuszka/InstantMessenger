@@ -8,8 +8,9 @@ function Register () {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const saveToken = (token:  string) => {
+    const saveToken = (token:  string, refreshToken: string) => {
         localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
     }
 
     const handleRegister = async () => {
@@ -38,7 +39,7 @@ function Register () {
             }
 
             if (data.status == 0) {
-                saveToken(data.token);
+                saveToken(data.token, data.refreshToken);
                 window.location.href = '/conversations';
             }
         } catch (error) {
