@@ -1,6 +1,5 @@
 using InstantMessenger.Application.DTOs;
 using InstantMessenger.Application.Services;
-using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

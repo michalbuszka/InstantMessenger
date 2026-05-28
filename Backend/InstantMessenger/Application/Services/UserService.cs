@@ -34,22 +34,26 @@ namespace InstantMessenger.Application.Services
             if (result.Errors.Any())
             {
                 result.Errors.ToList().ForEach(error => messages.Add(error.ErrorMessage));
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
                 return loginRegisterResponse;
             }
 
             if (!await _userRepository.IsUsernameAvailableAsync(registerRequest.Username))
             {
                 messages.Add("Username is already taken");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
                 return loginRegisterResponse;
             }
-
+            
             var user = UserMapper.CreateUser(registerRequest, string.Empty);
             var passwordHash = _passwordHasher.HashPassword(user, registerRequest.Password);
             user.PasswordHash = passwordHash;
             await _userRepository.AddUserAsync(user);
-            loginRegisterResponse = new(0, messages.ToArray(), _jwtService.GenerateToken(registerRequest.Username));
+            var token = _jwtService.GenerateToken(user.Username);
+            var refreshToken = _jwtService.GenerateRefreshToken(user.Username);
+            user.RefreshToken = refreshToken;
+            await _userRepository.SaveUserAsync();
+            loginRegisterResponse = new LoginRegisterResponse(0, messages.ToArray(), token, refreshToken);
             return loginRegisterResponse;
         }
 
@@ -61,14 +65,14 @@ namespace InstantMessenger.Application.Services
             if (result.Errors.Any())
             {
                 result.Errors.ToList().ForEach(error => messages.Add(error.ErrorMessage));
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
                 return loginRegisterResponse;
             }
 
             if (await _userRepository.IsUsernameAvailableAsync(loginRequest.Username))
             {
                 messages.Add("Invalid username or password.");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
                 return loginRegisterResponse;
             }
 
@@ -77,11 +81,14 @@ namespace InstantMessenger.Application.Services
                 PasswordVerificationResult.Success)
             {
                 messages.Add("Invalid username or password.");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
                 return loginRegisterResponse;
             }
-
-            loginRegisterResponse = new(0, messages.ToArray(), _jwtService.GenerateToken(loginRequest.Username));
+            var token = _jwtService.GenerateToken(user.Id.ToString());
+            var refreshToken = _jwtService.GenerateRefreshToken(loginRequest.Username);
+            user.RefreshToken = refreshToken;
+            await _userRepository.SaveUserAsync();
+            loginRegisterResponse = new(0, messages.ToArray(), token, refreshToken);
             return loginRegisterResponse;
         }
 
@@ -111,6 +118,18 @@ namespace InstantMessenger.Application.Services
             var users = await _userRepository.GetUserByNickQuery(nickQuery);
             contacts = users.Select(u => new UserDTO.ContactDTO(u.Id.ToString(), u.Nick, u.Username, u.Avatar!)).ToList();
             return contacts;
+        }
+
+        public async Task<Refresh?> RefreshUserAsync(string refreshToken)
+        {
+            var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+            if (user == null)
+                return null;
+            var newToken = _jwtService.GenerateToken(user.Username);
+            var newRefreshToken = _jwtService.GenerateRefreshToken(user.Username);
+            user.RefreshToken = newRefreshToken;
+            await _userRepository.SaveUserAsync();
+            return new Refresh(newToken, newRefreshToken);
         }
     }
 }

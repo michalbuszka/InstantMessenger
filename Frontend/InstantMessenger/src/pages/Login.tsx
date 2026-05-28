@@ -1,56 +1,62 @@
 import '../Styles/Login.css'
 import '../Styles/Global.css'
-import {useEffect, useRef, useState} from 'react'
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react'
 
 function Login () {
-        const [messages, setMessages] = useState<string[]>([]);
-        const usernameRef = useRef<HTMLInputElement>(null);
-        const passwordRef = useRef<HTMLInputElement>(null);
-    
-        const saveToken = (token:  string) => {
-            localStorage.setItem('token', token);
-        }
-    
-        const handleLogin = async () => {
-            setMessages([]);
-            try {
-                const response = await fetch('/api/LoginRegister/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: usernameRef.current?.value,
-                        password: passwordRef.current?.value
-                    })
-                });
-    
-                const data = await response.json();
-    
-                if (Array.isArray(data.messages)) {
-                    setMessages(data.messages);
-                } else if (data.message) {
-                    setMessages([data.message]);
+    const [messages, setMessages] = useState<string[]>([]);
+    const usernameRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
+
+    const saveToken = (token: string) => {
+        localStorage.setItem('token', token);
+    }
+
+    const handleLogin = async () => {
+        setMessages([]);
+        try {
+            const response = await axios.post('/api/LoginRegister/login', {
+                username: usernameRef.current?.value,
+                password: passwordRef.current?.value
+            });
+            const data = response.data;
+            if (Array.isArray(data.messages)) {
+                setMessages(data.messages);
+            } else if (data.message) {
+                setMessages([data.message]);
+            } else {
+                setMessages(['Wystąpił błąd podczas logowania.']);
+            }
+
+            if (data.status === 0) {
+                saveToken(data.token);
+                window.location.href = '/';
+            }
+        } catch (error: any) {
+            console.error(error);
+            if (error.response && error.response.data) {
+                const serverData = error.response.data;
+                
+                if (Array.isArray(serverData.messages)) {
+                    setMessages(serverData.messages);
+                } else if (serverData.message) {
+                    setMessages([serverData.message]);
                 } else {
-                    setMessages(['Wystąpił błąd podczas logowania.']);
+                    setMessages(['Serwer zwrócił błąd logowania.']);
                 }
-    
-                if (data.status == 0) {
-                    saveToken(data.token);
-                    window.location.href = '/';
-                }
-            } catch (error) {
-                console.error(error);
+            } else {
                 setMessages(['Nie można połączyć się z serwerem.']);
             }
         }
-    
-        useEffect(() => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                window.location.href = '/';
-            }
-        }, []);
+    }
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            window.location.href = '/';
+        }
+    }, []);
+
     return (
         <div className='container'>
             <div className='login'>
@@ -67,7 +73,7 @@ function Login () {
                         </ul>
                     )}
                 </div>
-                <button onClick={() => {handleLogin()}}>Login</button>
+                <button onClick={handleLogin}>Login</button> 
             </div>
         </div>
     )

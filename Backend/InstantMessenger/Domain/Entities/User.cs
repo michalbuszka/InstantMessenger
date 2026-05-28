@@ -12,6 +12,7 @@ namespace InstantMessenger.Domain.Entities
         public string Nick { get; set; }
         public string? Avatar { get; set; }
         public string PasswordHash { get; set; }
+        public string RefreshToken { get; set; }
         public List<ConversationUser> ConversationUsers { get; set; } = [];
     }
 }

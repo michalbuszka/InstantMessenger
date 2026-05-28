@@ -1,5 +1,6 @@
 import '../Styles/Global.css'
 import '../Styles/ConversationList.css'
+import axios from 'axios';
 import { useState, type ChangeEvent } from 'react';
 
 function ConversationsList() {
@@ -11,9 +12,8 @@ function ConversationsList() {
     }
     const [contacts, setContacts] = useState<User[]>([]);
     const serachConversations = async (query : string) => {
-        const response = await fetch(`/api/User/getUserContacts/${query}`);
-        const data = await response.json();
-        setContacts(data); //celowo bez spread operatora, żeby lista kontaktów się odświeżała ;) 
+        const response = await axios.get(`/api/User/getUserContacts/${query}`);
+        setContacts(response.data); 
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

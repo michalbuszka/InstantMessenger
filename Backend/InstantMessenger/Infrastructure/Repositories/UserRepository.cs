@@ -43,6 +43,11 @@ namespace InstantMessenger.Infrastructure.Repositories
             return await _appDbContext.Users.Where(u => u.Nick.Contains(nickQuery)).ToListAsync();
         }
         
+        public async Task<User?> GetUserByRefreshToken(string refreshToken)
+        {
+            return await _appDbContext.Users.Where(u => u.RefreshToken.Equals(refreshToken)).FirstOrDefaultAsync();
+        }
+        
         
     }
 }
