@@ -26,7 +26,7 @@ namespace InstantMessenger.Application.Services
             _loginValidator = loginValidator;
         }
 
-        public async Task<LoginRegisterResponse> AddUserAsync(RegisterRequest registerRequest)
+        public async Task<LoginRegisterResponseWithRefreshToken> AddUserAsync(RegisterRequest registerRequest)
         {
             List<string> messages = new List<string>();
             LoginRegisterResponse loginRegisterResponse;
@@ -34,15 +34,15 @@ namespace InstantMessenger.Application.Services
             if (result.Errors.Any())
             {
                 result.Errors.ToList().ForEach(error => messages.Add(error.ErrorMessage));
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
-                return loginRegisterResponse;
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, string.Empty);
             }
 
             if (!await _userRepository.IsUsernameAvailableAsync(registerRequest.Username))
             {
                 messages.Add("Username is already taken");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
-                return loginRegisterResponse;
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse,string.Empty);
             }
             
             var user = UserMapper.CreateUser(registerRequest, string.Empty);
@@ -53,11 +53,11 @@ namespace InstantMessenger.Application.Services
             var refreshToken = _jwtService.GenerateRefreshToken(user.Username);
             user.RefreshToken = refreshToken;
             await _userRepository.SaveUserAsync();
-            loginRegisterResponse = new LoginRegisterResponse(0, messages.ToArray(), token, refreshToken);
-            return loginRegisterResponse;
+            loginRegisterResponse = new LoginRegisterResponse(0, messages.ToArray(), token);
+            return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);
         }
 
-        public async Task<LoginRegisterResponse> LoginUserAsync(LoginRequest loginRequest)
+        public async Task<LoginRegisterResponseWithRefreshToken> LoginUserAsync(LoginRequest loginRequest)
         {
             List<string> messages = new List<string>();
             LoginRegisterResponse loginRegisterResponse;
@@ -65,15 +65,15 @@ namespace InstantMessenger.Application.Services
             if (result.Errors.Any())
             {
                 result.Errors.ToList().ForEach(error => messages.Add(error.ErrorMessage));
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
-                return loginRegisterResponse;
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, string.Empty);
             }
 
             if (await _userRepository.IsUsernameAvailableAsync(loginRequest.Username))
             {
                 messages.Add("Invalid username or password.");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
-                return loginRegisterResponse;
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, string.Empty);
             }
 
             var user = await _userRepository.GetUserByUsernameAsync(loginRequest.Username);
@@ -81,15 +81,15 @@ namespace InstantMessenger.Application.Services
                 PasswordVerificationResult.Success)
             {
                 messages.Add("Invalid username or password.");
-                loginRegisterResponse = new(1, messages.ToArray(), string.Empty, string.Empty);
-                return loginRegisterResponse;
+                loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
+                return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, string.Empty);
             }
             var token = _jwtService.GenerateToken(user.Id.ToString());
             var refreshToken = _jwtService.GenerateRefreshToken(loginRequest.Username);
             user.RefreshToken = refreshToken;
             await _userRepository.SaveUserAsync();
-            loginRegisterResponse = new(0, messages.ToArray(), token, refreshToken);
-            return loginRegisterResponse;
+            loginRegisterResponse = new(0, messages.ToArray(), token);
+            return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);;
         }
 
         public async Task<bool> UpdateUserDataAsync(string? username, UserDTO.UserSettingsDTO userSettings)
@@ -112,15 +112,13 @@ namespace InstantMessenger.Application.Services
 
         public async Task<List<UserDTO.ContactDTO>?> GetUsersByNickQuery(string? nickQuery)
         {
-            if (nickQuery == null)
-                return null;
             List<UserDTO.ContactDTO> contacts = new();
             var users = await _userRepository.GetUserByNickQuery(nickQuery);
             contacts = users.Select(u => new UserDTO.ContactDTO(u.Id.ToString(), u.Nick, u.Username, u.Avatar!)).ToList();
             return contacts;
         }
 
-        public async Task<Refresh?> RefreshUserAsync(string refreshToken)
+        public async Task<Tokens?> RefreshUserAsync(string refreshToken)
         {
             var user = await _userRepository.GetUserByRefreshToken(refreshToken);
             if (user == null)
@@ -129,7 +127,7 @@ namespace InstantMessenger.Application.Services
             var newRefreshToken = _jwtService.GenerateRefreshToken(user.Username);
             user.RefreshToken = newRefreshToken;
             await _userRepository.SaveUserAsync();
-            return new Refresh(newToken, newRefreshToken);
+            return new Tokens(newToken, newRefreshToken);
         }
     }
 }

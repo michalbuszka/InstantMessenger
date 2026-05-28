@@ -32,8 +32,6 @@ public class UserController(JwtService jwtService, UserService userService) : Co
     [HttpGet("getUserContacts/{nickQuery}")]
     public async Task<IActionResult> GetUserData(string? nickQuery)
     {
-        if (nickQuery == null)
-            return BadRequest();
         return Ok(await userService.GetUsersByNickQuery(nickQuery));
     }  
     

@@ -19,13 +19,29 @@ namespace InstantMessenger.API.Controllers
         public async Task<IActionResult> register([FromBody]  RegisterRequest registerLogin)
         {
             var response = await _userService.AddUserAsync(registerLogin);
-            return Ok(response);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true, 
+                Secure = true,   
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7) 
+            };
+            Response.Cookies.Append("refreshToken", response.RefreshToken, cookieOptions);
+            return Ok(response.LoginRegisterResponse);
         }
         [HttpPost("login")]
         public async Task<IActionResult> login([FromBody]  LoginRequest loginRequest)
         {
             var response = await _userService.LoginUserAsync(loginRequest);
-            return Ok(response);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true, 
+                Secure = true,   
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7) 
+            };
+            Response.Cookies.Append("refreshToken", response.RefreshToken, cookieOptions);
+            return Ok(response.LoginRegisterResponse);
         }
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
@@ -34,7 +50,6 @@ namespace InstantMessenger.API.Controllers
             {
                 return BadRequest("Brak tokenu w ciasteczku.");
             }
-
             var tokens = await _userService.RefreshUserAsync(refreshToken);
             if (tokens == null)
             {
