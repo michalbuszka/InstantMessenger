@@ -29,7 +29,7 @@ public class UserController(JwtService jwtService, UserService userService) : Co
             return BadRequest();
         return Ok(data);
     }  
-    [HttpGet("getUserContacts/{nickQuery}")]
+    [HttpGet("getUserContacts/{nickQuery?}")]
     public async Task<IActionResult> GetUserData(string? nickQuery)
     {
         return Ok(await userService.GetUsersByNickQuery(nickQuery));
