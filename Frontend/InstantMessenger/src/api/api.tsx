@@ -7,7 +7,7 @@ const api = axios.create({
 
 let accessToken = ''; 
 
-export const setAccessToken = (token) => {
+export const setAccessToken = (token: string) => {
   accessToken = token;
 };
 
@@ -31,8 +31,7 @@ api.interceptors.response.use(
 
       try {
         const response = await axios.post('/api/LoginRegister/refresh', {}, { withCredentials: true });
-        const newAccessToken = response.data.Token;
-
+        const newAccessToken = response.data.token;
         setAccessToken(newAccessToken);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
@@ -47,3 +46,16 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export function isLoggedIn() {
+  return !!localStorage.getItem('token');
+}
+
+export async function checkAuthWithBackend() {
+  try {
+    await api.get('/api/User/getUserData');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

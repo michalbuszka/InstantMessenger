@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
 import '../Styles/UserSettingsModal.css';
+import api from '../api/api';
 
 export interface UserData {
     email: string;
@@ -48,16 +49,9 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
         onSave(formData);
     };
 
-    const getData = async (token : string) => {
-        const response = await fetch('api/User/getUserData', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
-        });
-        const data = await response.json();
-                console.log(data);
+    const getData = async () => {
+        const response = await api.get('api/User/getUserData');
+        const data = response.data;
         setFormData(prev => ({
             ...prev,
             email: data.email,
@@ -68,12 +62,7 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-        getData(token);
+        getData();
     }, []);
 
     return ReactDOM.createPortal(

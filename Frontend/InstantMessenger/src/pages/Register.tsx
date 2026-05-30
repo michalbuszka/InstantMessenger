@@ -1,6 +1,6 @@
 import '../Styles/Login.css'
 import '../Styles/Global.css'
-import axios from 'axios'; // 1. Dodany import Axiosa
+import api, { setAccessToken } from '../api/api.tsx';
 import { useEffect, useRef, useState } from 'react'
 
 function Register () {
@@ -9,15 +9,10 @@ function Register () {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const saveToken = (token: string, refreshToken: string) => {
-        localStorage.setItem('token', token);
-        localStorage.setItem('refreshToken', refreshToken);
-    }
-
     const handleRegister = async () => {
         setMessages([]);
         try {
-            const response = await axios.post('/api/LoginRegister/register', {
+            const response = await api.post('/api/LoginRegister/register', {
                 nick: nickRef.current?.value,
                 username: usernameRef.current?.value,
                 password: passwordRef.current?.value
@@ -34,8 +29,8 @@ function Register () {
             }
 
             if (data.status === 0) {
-                saveToken(data.token, data.refreshToken);
-                window.location.href = '/conversations';
+                setAccessToken(data.token);                
+                window.location.href = '/';
             }
         } catch (error: any) {
             console.error(error);
@@ -56,10 +51,10 @@ function Register () {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            window.location.href = '/';
-        }
+        // const token = localStorage.getItem('token');
+        // if (token) {
+        //     window.location.href = '/';
+        // }
     }, []);
 
     return (

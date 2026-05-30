@@ -1,6 +1,6 @@
 import '../Styles/Login.css'
 import '../Styles/Global.css'
-import axios from 'axios';
+import api, { setAccessToken } from '../api/api.tsx'
 import { useEffect, useRef, useState } from 'react'
 
 function Login () {
@@ -8,14 +8,10 @@ function Login () {
     const usernameRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
-    const saveToken = (token: string) => {
-        localStorage.setItem('token', token);
-    }
-
     const handleLogin = async () => {
         setMessages([]);
         try {
-            const response = await axios.post('/api/LoginRegister/login', {
+            const response = await api.post('/api/LoginRegister/login', {
                 username: usernameRef.current?.value,
                 password: passwordRef.current?.value
             });
@@ -29,7 +25,7 @@ function Login () {
             }
 
             if (data.status === 0) {
-                saveToken(data.token);
+                setAccessToken(data.token);
                 window.location.href = '/';
             }
         } catch (error: any) {
@@ -51,10 +47,7 @@ function Login () {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            window.location.href = '/';
-        }
+        
     }, []);
 
     return (
