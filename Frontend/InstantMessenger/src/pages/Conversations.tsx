@@ -3,30 +3,47 @@ import Conversation from "../components/Conversation"
 import FriendDetails from "../components/FriendDetails"
 import '../Styles/Global.css'
 import '../Styles/Conversations.css'
-import { useState } from "react"
-import api from '../api/api.tsx';
+import { useEffect, useState } from "react"
+import api, {checkAuthWithBackend} from '../api/api.tsx';
 import UserSettingsModal from "../modals/UserSettingsModal"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 function Conversations() {
     const [isUserSettingsModalOpen, setIsUserSettingsModalOpen] = useState(false);
-    
+
     const handleSaveSettings = async (data: any) => {
-        setIsUserSettingsModalOpen(false); 
+        setIsUserSettingsModalOpen(false);
         var response = await api.post('/api/User/updateUserData', data);
         if (response.status == 200)
-            alert("The data has been saved!");
+            toast.success("The data has been saved!");
     };
 
-    const logout = () => {
-        // localStorage.removeItem('token');
-        // window.location.href = '/login';
+    const logout = async () => {
+        var response = await api.get('/api/LoginRegister/logout');
+        if (response.status == 200) {
+            location.href = '/login';
+        }
+
     }
+
+    const checkLogin = async () => {
+        
+        if (!checkAuthWithBackend()){
+            location.href = '/login';
+        }
+    }
+
+    useEffect(() => {
+        checkLogin();
+    }, [])
 
     return (
         <div className="messengerContainer">
-            <UserSettingsModal 
-                isOpen={isUserSettingsModalOpen} 
-                onClose={() => setIsUserSettingsModalOpen(false)} 
+            <UserSettingsModal
+                isOpen={isUserSettingsModalOpen}
+                onClose={() => setIsUserSettingsModalOpen(false)}
                 onSave={handleSaveSettings}
             />
 
@@ -35,6 +52,7 @@ function Conversations() {
                 <div className="userSettings">
                     <button onClick={() => setIsUserSettingsModalOpen(true)}>Settings</button>
                     <button onClick={logout}>Logout</button>
+                    <ToastContainer position="top-right" autoClose={3000} />
                 </div>
             </div>
             <Conversation />

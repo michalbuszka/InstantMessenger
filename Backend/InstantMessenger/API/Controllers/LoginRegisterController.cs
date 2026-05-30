@@ -65,6 +65,27 @@ namespace InstantMessenger.API.Controllers
             Response.Cookies.Append("refreshToken", tokens.RefreshToken, cookieOptions);
             return Ok(new {Token = tokens.Token});
         }
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+            {
+                return Ok();
+            }
+            await _userService.LogoutUserAsync(refreshToken);
+            
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,            
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddDays(-1) 
+            };
+            
+            Response.Cookies.Append("refreshToken", "", cookieOptions);
+            
+            return Ok();
+        }
         
     }
 }

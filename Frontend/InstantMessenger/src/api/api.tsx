@@ -47,10 +47,6 @@ api.interceptors.response.use(
 
 export default api;
 
-export function isLoggedIn() {
-  return !!localStorage.getItem('token');
-}
-
 export async function checkAuthWithBackend() {
   try {
     await api.get('/api/User/getUserData');

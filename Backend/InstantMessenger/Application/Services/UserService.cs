@@ -129,5 +129,14 @@ namespace InstantMessenger.Application.Services
             await _userRepository.SaveUserAsync();
             return new Tokens(newToken, newRefreshToken);
         }
+        
+        public async Task LogoutUserAsync(string refreshToken)
+        {
+            var user = await _userRepository.GetUserByRefreshToken(refreshToken);
+            if (user == null)
+                return;
+            user.RefreshToken = string.Empty;
+            await _userRepository.SaveUserAsync();
+        }
     }
 }
