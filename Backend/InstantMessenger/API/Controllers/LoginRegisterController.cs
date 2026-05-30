@@ -48,12 +48,12 @@ namespace InstantMessenger.API.Controllers
         {
             if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {
-                return BadRequest("Brak tokenu w ciasteczku.");
+                return BadRequest();
             }
             var tokens = await _userService.RefreshUserAsync(refreshToken);
             if (tokens == null)
             {
-                return Unauthorized("Nieprawidłowy token odświeżania.");
+                return Unauthorized();
             }
             var cookieOptions = new CookieOptions
             {

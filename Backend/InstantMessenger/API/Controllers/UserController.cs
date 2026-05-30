@@ -7,9 +7,8 @@ namespace InstantMessenger.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UserController(JwtService jwtService, UserService userService) : ControllerBase
+public class UserController(UserService userService) : ControllerBase
 {
-    private readonly JwtService _jwtService = jwtService;
     [Authorize]
     [HttpPost("updateUserData")]
     public async Task<IActionResult> UpdateUserData([FromBody] UserDTO.UserSettingsDTO userSettings)

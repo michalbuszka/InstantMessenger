@@ -3,13 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InstantMessenger.Infrastructure
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions dbContextOptions) : DbContext(dbContextOptions)
     {
-        public AppDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
-        {
-            
-        }
-
         public DbSet<User> Users { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
