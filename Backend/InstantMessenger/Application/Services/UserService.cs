@@ -114,7 +114,7 @@ namespace InstantMessenger.Application.Services
         {
             List<UserDTO.ContactDTO> contacts = new();
             var users = await _userRepository.GetUserByNickQuery(nickQuery);
-            contacts = users.Select(u => new UserDTO.ContactDTO(u.Id.ToString(), u.Nick, u.Username, u.Avatar!)).ToList();
+            contacts = users.Select(u => new UserDTO.ContactDTO(u.Id.ToString(), u.Nick, u.Avatar!)).ToList();
             return contacts;
         }
 
@@ -137,6 +137,14 @@ namespace InstantMessenger.Application.Services
                 return;
             user.RefreshToken = string.Empty;
             await _userRepository.SaveUserAsync();
+        }
+
+        public async Task<UserDTO.ContactDTO> GetUserById(string Id)
+        {
+            var user = await _userRepository.GetUserByIdAsync(Guid.Parse(Id));
+            if (user is null)
+                return null;
+            return new UserDTO.ContactDTO(user.Id.ToString(), user.Nick, user.Avatar!);
         }
     }
 }

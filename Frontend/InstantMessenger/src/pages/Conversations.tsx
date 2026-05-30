@@ -50,7 +50,7 @@ function Conversations() {
             <div className="leftPanel">
                 <ConversationsList />
                 <div className="userSettings">
-                    <button onClick={() => setIsUserSettingsModalOpen(true)}>Settings</button>
+                    <button onClick={() => setIsUserSettingsModalOpen(true)}>User settings</button>
                     <button onClick={logout}>Logout</button>
                     <ToastContainer position="top-right" autoClose={3000} />
                 </div>

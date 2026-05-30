@@ -1,12 +1,31 @@
 import '../Styles/Global.css'
 import '../Styles/Conversation.css'
 import Message from '../components/Message.tsx';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import api, { setAccessToken } from '../api/api.tsx';
+
+interface User {
+    id: string,
+    avatar: string,
+    nick: string
+}
 
 function Conversation () {
+    const [user, setUser] = useState<User | null>(null)
+    const getUser = async (id : string) => {
+        const response = await api.get(`/api/User/getUser/${id}`);
+        setUser(response.data);
+    }
+    const { id } = useParams<{ id: string }>();
+    useEffect(() => {
+        if (id != null)
+            getUser(id);
+    }, [id])
     return(           
         <div className="conversation">
             <div className='conversationHeader'>
-                <h2>Jan Kowalski</h2>
+                <h2>{user?.nick}</h2>
             </div>
             <div className="messages">
                 <Message sender='Michał Buszka' content='siema' messageClass='myMessage' date='12:11'/>

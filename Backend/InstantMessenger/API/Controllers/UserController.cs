@@ -29,9 +29,14 @@ public class UserController(UserService userService) : ControllerBase
         return Ok(data);
     }  
     [HttpGet("getUserContacts/{nickQuery?}")]
-    public async Task<IActionResult> GetUserData(string? nickQuery)
+    public async Task<IActionResult> GetUserContacts(string? nickQuery)
     {
         return Ok(await userService.GetUsersByNickQuery(nickQuery));
     }  
-    
+    [AllowAnonymous]
+    [HttpGet("getUser/{id}")]
+    public async Task<IActionResult> GetUser(string id)
+    {
+        return Ok(await userService.GetUserById(id));
+    }  
 }

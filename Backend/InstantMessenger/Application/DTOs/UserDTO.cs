@@ -9,5 +9,5 @@ public class UserDTO
         string? Nick,
         string? Avatar);
     
-    public record ContactDTO(string Id, string nick, string login, string avatar);
+    public record ContactDTO(string Id, string nick, string avatar);
 }

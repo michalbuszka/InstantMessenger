@@ -29,6 +29,12 @@
     cursor: pointer;
 }
 
+.profile:hover 
+{
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .profilePicture
 {
     width: 60px;

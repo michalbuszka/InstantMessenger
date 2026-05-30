@@ -50,13 +50,6 @@ function Register () {
         }
     }
 
-    useEffect(() => {
-        // const token = localStorage.getItem('token');
-        // if (token) {
-        //     window.location.href = '/';
-        // }
-    }, []);
-
     return (
         <div className='container'>
             <div className='login'>
