@@ -25,6 +25,9 @@ function Conversation () {
     return(           
         <div className="conversation">
             <div className='conversationHeader'>
+                <div className="profilePicture">
+                    <img src={user?.avatar} alt="Awatar" className='contactAvatar'></img>
+                </div>
                 <h2>{user?.nick}</h2>
             </div>
             <div className="messages">
