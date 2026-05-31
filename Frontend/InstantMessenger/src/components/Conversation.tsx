@@ -3,9 +3,8 @@ import '../Styles/Conversation.css'
 import Message from '../components/Message.tsx';
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
-import api, { setAccessToken } from '../api/api.tsx';
+import api, { getAccessToken, checkAuthWithBackend } from '../api/api.tsx';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import { sendMessage } from '@microsoft/signalr/dist/esm/Utils';
 
 interface User {
     id: string,
@@ -25,13 +24,21 @@ function Conversation() {
         const messageText = messageRef.current?.value;
         connection.send("SendMessage", "ID", messageText);
     }
-    useEffect(() => {
+    const connectToSignalR = (accessToken : string) => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl(' http://localhost:5199/conversationHub') 
-            .withAutomaticReconnect() 
+            .withUrl('http://localhost:5199/conversationHub', {
+                accessTokenFactory: () => accessToken
+            })
+            .withAutomaticReconnect()
             .configureLogging(LogLevel.Information)
             .build();
         setConnection(newConnection);
+    }
+    const connect = async () => {
+        connectToSignalR(await getAccessToken());
+    }
+    useEffect(() => {
+        connect();
     }, []);
     const { id } = useParams<{ id: string }>();
     useEffect(() => {
@@ -39,24 +46,24 @@ function Conversation() {
             getUser(id);
     }, [id])
     useEffect(() => {
-    if (connection) {
-      connection.start()
-        .then(result => {
-          console.log('Połączono z SignalR!');
-          connection.on('ReceiveMessage', (userId, message) => {
-            console.log(message);
-          });
-        })
-        .catch(e => console.log('Błąd połączenia: ', e));
-    }
+        if (connection) {
+            connection.start()
+                .then(result => {
+                    console.log('Połączono z SignalR!');
+                    connection.on('ReceiveMessage', (userId, message) => {
+                        console.log(message);
+                    });
+                })
+                .catch(e => console.log('Błąd połączenia: ', e));
+        }
 
-    return () => {
-      if (connection) {
-        connection.off('ReceiveMessage');
-        connection.stop();
-      }
-    };
-  }, [connection]);
+        return () => {
+            if (connection) {
+                connection.off('ReceiveMessage');
+                connection.stop();
+            }
+        };
+    }, [connection]);
     return (
         <div className="conversation">
             <div className='conversationHeader'>

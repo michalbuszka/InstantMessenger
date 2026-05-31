@@ -54,10 +54,10 @@ function UserSettingsModal({ isOpen, onClose, onSave, initialData }: UserSetting
         const data = response.data;
         setFormData(prev => ({
             ...prev,
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            nick: data.nick
+            email: data.email || '',
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            nick: data.nick || ''
         }));
     }
 

@@ -11,6 +11,16 @@ export const setAccessToken = (token: string) => {
   accessToken = token;
 };
 
+export const getAccessToken = async () => {
+  if (accessToken.length<=0)
+  {
+    const result = await api.post('/api/LoginRegister/refresh');
+    return result.data.token;
+  }
+  setAccessToken(accessToken);
+  return accessToken;
+}
+
 api.interceptors.request.use(
   (config) => {
     if (accessToken) {
@@ -30,7 +40,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post('/api/LoginRegister/refresh', {}, { withCredentials: true });
+        const response = await axios.post('http://localhost:5199/api/LoginRegister/refresh', {}, { withCredentials: true });
         const newAccessToken = response.data.token;
         setAccessToken(newAccessToken);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
@@ -48,6 +58,8 @@ api.interceptors.response.use(
 export default api;
 
 export async function checkAuthWithBackend() {
+  if (accessToken.length > 0)
+    return true;
   try {
     await api.get('/api/User/getUserData');
     return true;
