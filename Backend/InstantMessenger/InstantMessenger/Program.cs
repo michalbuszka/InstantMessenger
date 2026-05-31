@@ -1,4 +1,5 @@
 using System.Text;
+using InstantMessenger.Application.Hubs;
 using InstantMessenger.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using InstantMessenger.Application.Services;
@@ -55,6 +56,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<RegisterValidator>();
 builder.Services.AddScoped<LoginValidator>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -78,5 +80,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<ConversationHub>("/conversationHub");
 
 app.Run();
