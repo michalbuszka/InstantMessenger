@@ -48,7 +48,7 @@ namespace InstantMessenger.API.Controllers
         {
             if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
             {
-                return BadRequest();
+                return Unauthorized();
             }
             var tokens = await _userService.RefreshUserAsync(refreshToken);
             if (tokens == null)

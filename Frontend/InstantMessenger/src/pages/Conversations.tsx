@@ -28,17 +28,6 @@ function Conversations() {
 
     }
 
-    const checkLogin = async () => {
-        
-        if (!checkAuthWithBackend()){
-            location.href = '/login';
-        }
-    }
-
-    useEffect(() => {
-        checkLogin();
-    }, [])
-
     return (
         <div className="messengerContainer">
             <UserSettingsModal

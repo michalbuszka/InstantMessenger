@@ -15,6 +15,11 @@ export const getAccessToken = async () => {
   if (accessToken.length<=0)
   {
     const result = await api.post('/api/LoginRegister/refresh');
+    if (result.status == 401)
+    {
+        location.href='/login';
+        return;
+    }
     return result.data.token;
   }
   setAccessToken(accessToken);
