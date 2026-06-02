@@ -9,8 +9,9 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
     {
         return await appDbContext.Conversations
             .Where(c => !c.IsGroup)
-            .Where(c => c.ConversationUsers.Any(cu => cu.User == sender))
-            .Where(c => c.ConversationUsers.Any(cu => cu.User == target))
+            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == sender.Id))
+            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == target.Id))
+            .Include(c => c.ConversationUsers)
             .FirstOrDefaultAsync();
     }
 
@@ -20,9 +21,11 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
         var senderCU = new ConversationUser();
         senderCU.User = sender;
         senderCU.Nick = sender.Nick;
+        senderCU.ConversationId = conversation.Id;
         var targetCU = new ConversationUser();
         targetCU.User = target;
         targetCU.Nick = target.Nick;
+        targetCU.ConversationId = conversation.Id;
         conversation.ConversationUsers.Add(senderCU);
         conversation.ConversationUsers.Add(targetCU);
         await appDbContext.Conversations.AddAsync(conversation);
@@ -33,6 +36,7 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
     public async Task AddMessage(Conversation conversation, Message message)
     {
         conversation.Messages.Add(message);
+        appDbContext.Messages.Add(message);
         await appDbContext.SaveChangesAsync();
     }
 }

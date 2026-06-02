@@ -68,7 +68,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<MessagingService>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ConversationRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<RegisterValidator>();
 builder.Services.AddScoped<LoginValidator>();
