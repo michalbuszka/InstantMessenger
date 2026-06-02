@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace InstantMessenger.Application.Services;
 
-public class JwtService
+public sealed class JwtService
 {
     private readonly IConfiguration _configuration;
     public JwtService(IConfiguration configuration)

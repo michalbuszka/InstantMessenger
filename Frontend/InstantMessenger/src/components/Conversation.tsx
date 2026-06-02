@@ -21,8 +21,8 @@ function Conversation() {
         setUser(response.data);
     }
     const sendMessage = () => {
-        const messageText = messageRef.current?.value;
-        connection.send("SendMessage", "ID", messageText);
+        const messageContent = messageRef.current?.value;
+        connection.send("SendMessage", id, messageContent);
     }
     const connectToSignalR = (accessToken : string) => {
         const newConnection = new HubConnectionBuilder()

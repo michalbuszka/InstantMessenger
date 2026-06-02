@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace InstantMessenger.Application.Services
 {
-    public class UserService
+    public sealed class UserService
     {
         private readonly UserRepository _userRepository;
         private readonly JwtService _jwtService;

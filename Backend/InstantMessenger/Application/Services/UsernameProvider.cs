@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace InstantMessenger.Application.Services;
 
-public class CustomUserIdProvider : IUserIdProvider
+public sealed class CustomUserIdProvider : IUserIdProvider
 {
     public string? GetUserId(HubConnectionContext connection)
     {
