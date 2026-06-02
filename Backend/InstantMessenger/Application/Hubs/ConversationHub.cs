@@ -20,6 +20,6 @@ public class ConversationHub(ILogger<ConversationHub> logger, MessagingService m
         User? targetUser = await userRepository.GetUserByIdAsync(Guid.Parse(userId));
         if (user is null || targetUser is null)
             return;
-        await messagingService.SendMessage(user.Id, targetUser.Id, messageContent);
+        await messagingService.SendMessage(user.Id, targetUser.Id, messageContent, Clients);
     }
 }
