@@ -18,14 +18,18 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
     public async Task<Conversation> AddPrivConversationAsync(User sender, User target)
     {
         Conversation conversation = new Conversation();
-        var senderCU = new ConversationUser();
-        senderCU.User = sender;
-        senderCU.Nick = sender.Nick;
-        senderCU.ConversationId = conversation.Id;
-        var targetCU = new ConversationUser();
-        targetCU.User = target;
-        targetCU.Nick = target.Nick;
-        targetCU.ConversationId = conversation.Id;
+        var senderCU = new ConversationUser
+        {
+            User = sender,
+            Nick = sender.Nick,
+            ConversationId = conversation.Id
+        };
+        var targetCU = new ConversationUser
+        {
+            User = target,
+            Nick = target.Nick,
+            ConversationId = conversation.Id
+        };
         conversation.ConversationUsers.Add(senderCU);
         conversation.ConversationUsers.Add(targetCU);
         await appDbContext.Conversations.AddAsync(conversation);
@@ -36,7 +40,6 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
     public async Task AddMessage(Conversation conversation, Message message)
     {
         conversation.Messages.Add(message);
-        appDbContext.Messages.Add(message);
         await appDbContext.SaveChangesAsync();
     }
 }
