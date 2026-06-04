@@ -1,4 +1,4 @@
-﻿using InstantMessenger.Application.DTOs;
+﻿using InstantMessenger.Application.DTOs.User;
 using InstantMessenger.Domain.Entities;
 using RegisterRequest = InstantMessenger.Application.DTOs.LoginRegister.RegisterRequest;
 
@@ -17,7 +17,7 @@ namespace InstantMessenger.Application.Mappers
             return user;
         }
 
-        public static void UpdateUser(User user, UserDto.UserSettingsDto userSettings)
+        public static void UpdateUser(User user, UserSettingsDto userSettings)
         {
             if (userSettings.Email is not null)
                 user.Email = userSettings.Email;

@@ -1,4 +1,4 @@
-using InstantMessenger.Application.DTOs;
+using InstantMessenger.Application.DTOs.User;
 using InstantMessenger.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ public class UserController(UserService userService) : ControllerBase
 {
     [Authorize]
     [HttpPost("updateUserData")]
-    public async Task<IActionResult> UpdateUserData([FromBody] UserDto.UserSettingsDto userSettings)
+    public async Task<IActionResult> UpdateUserData([FromBody] UserSettingsDto userSettings)
     {
         var username = User.Identity?.Name;
         if (await userService.UpdateUserDataAsync(username, userSettings))

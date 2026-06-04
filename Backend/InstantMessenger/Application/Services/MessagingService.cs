@@ -10,7 +10,7 @@ public sealed class MessagingService(ConversationRepository conversationReposito
     {
         var sendMsg = new List<Task>();
         foreach (var user in message.Conversation.ConversationUsers)
-            sendMsg.Add(clients.User(user.User.Username).SendAsync("ReceiveMessage", message.SenderId.ToString(), message.Content));
+            sendMsg.Add(clients.User(user.User.Username).SendAsync("ReceiveMessage", message.SenderId.ToString(), message.Content, message.date.ToString()));
         await Task.WhenAll(sendMsg);
     }
     
@@ -24,7 +24,8 @@ public sealed class MessagingService(ConversationRepository conversationReposito
         var senderCu = conversation.ConversationUsers.FirstOrDefault(u => u.User.Id == sender.Id);
         if (senderCu == null)
             return;
-        var message = new Message { SenderId = senderCu.Id, Content = msgContent, ConversationId = conversation.Id};
+        var date = new DateTimeOffset(DateTime.UtcNow.Date, TimeSpan.Zero);
+        var message = new Message { SenderId = senderCu.Id, Content = msgContent, ConversationId = conversation.Id, date = date};
         await conversationRepository.AddMessage(conversation, message);
         await NotifyUsers(message, clients);
     }

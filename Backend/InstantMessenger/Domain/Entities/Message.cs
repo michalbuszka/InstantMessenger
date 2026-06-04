@@ -6,9 +6,10 @@ namespace InstantMessenger.Domain.Entities
     {
         [Key] 
         public int Id { get; set; }
-        public Guid SenderId { get; set; }
-        public int ConversationId { get; set; }
-        public string Content { get; set; } 
+        public required Guid SenderId { get; set; }
+        public required int ConversationId { get; set; }
+        public required string Content { get; set; }
+        public required DateTimeOffset date { get; set; }
         public ConversationUser Sender { get; set; }
         public Conversation Conversation { get; set; }
         public List<Reaction> Reactions { get; set; } = new();

@@ -1,5 +1,5 @@
-﻿using InstantMessenger.Application.DTOs;
-using InstantMessenger.Application.DTOs.LoginRegister;
+﻿using InstantMessenger.Application.DTOs.LoginRegister;
+using InstantMessenger.Application.DTOs.User;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Application.Validators;
 using InstantMessenger.Domain.Entities;
@@ -81,7 +81,7 @@ namespace InstantMessenger.Application.Services
             return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);;
         }
 
-        public async Task<bool> UpdateUserDataAsync(string? username, UserDto.UserSettingsDto userSettings)
+        public async Task<bool> UpdateUserDataAsync(string? username, UserSettingsDto userSettings)
         {
             var user = await userRepository.GetUserByUsernameAsync(username);
             if (user == null)
@@ -91,19 +91,19 @@ namespace InstantMessenger.Application.Services
             return true;
         }
 
-        public async Task<UserDto.UserSettingsDto?> GetUserDataAsync(string? username)
+        public async Task<UserSettingsDto?> GetUserDataAsync(string? username)
         {
             var user = await userRepository.GetUserByUsernameAsync(username);
             if (user == null)
                 return null;
-            return new UserDto.UserSettingsDto(user.Email, user.FirstName, user.LastName, user.Nick, user.Avatar);
+            return new UserSettingsDto(user.Email, user.FirstName, user.LastName, user.Nick, user.Avatar);
         }
 
-        public async Task<List<UserDto.ContactDto>?> GetUsersByNickQuery(string? nickQuery)
+        public async Task<List<ContactDto>?> GetUsersByNickQuery(string? nickQuery)
         {
-            List<UserDto.ContactDto> contacts = new();
+            List<ContactDto> contacts = new();
             var users = await userRepository.GetUserByNickQuery(nickQuery);
-            contacts = users.Select(u => new UserDto.ContactDto(u.Id.ToString(), u.Nick, u.Avatar!)).ToList();
+            contacts = users.Select(u => new ContactDto(u.Id.ToString(), u.Nick, u.Avatar!)).ToList();
             return contacts;
         }
 
@@ -128,12 +128,12 @@ namespace InstantMessenger.Application.Services
             await userRepository.SaveUserAsync();
         }
 
-        public async Task<UserDto.ContactDto> GetUserById(string Id)
+        public async Task<ContactDto> GetUserById(string Id)
         {
             var user = await userRepository.GetUserByIdAsync(Guid.Parse(Id));
             if (user is null)
                 return null;
-            return new UserDto.ContactDto(user.Id.ToString(), user.Nick, user.Avatar!);
+            return new ContactDto(user.Id.ToString(), user.Nick, user.Avatar!);
         }
     }
 }

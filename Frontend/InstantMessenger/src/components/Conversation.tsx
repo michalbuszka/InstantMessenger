@@ -56,8 +56,8 @@ function Conversation() {
             connection.start()
                 .then(result => {
                     console.log('Połączono z SignalR!');
-                    connection.on('ReceiveMessage', (userId, message) => {
-                        console.log(message);
+                    connection.on('ReceiveMessage', (userId, messageContent, date) => {
+                        console.log(`${messageContent} ${date}`);
                     });
                 })
                 .catch(e => console.log('Błąd połączenia: ', e));
