@@ -9,9 +9,7 @@ public sealed class CustomUserIdProvider : IUserIdProvider
     {
         var username = connection.User?.FindFirst("unique_name")?.Value;
         if (string.IsNullOrEmpty(username))
-        {
             username = connection.User?.FindFirst(ClaimTypes.Name)?.Value;
-        }
         return username;
     }
 }

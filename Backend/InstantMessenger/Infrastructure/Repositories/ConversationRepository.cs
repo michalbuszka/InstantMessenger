@@ -17,21 +17,21 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
 
     public async Task<Conversation> AddPrivConversationAsync(User sender, User target)
     {
-        Conversation conversation = new Conversation();
-        var senderCU = new ConversationUser
+        var conversation = new Conversation();
+        var senderCu = new ConversationUser
         {
             User = sender,
             Nick = sender.Nick,
             ConversationId = conversation.Id
         };
-        var targetCU = new ConversationUser
+        var targetCu = new ConversationUser
         {
             User = target,
             Nick = target.Nick,
             ConversationId = conversation.Id
         };
-        conversation.ConversationUsers.Add(senderCU);
-        conversation.ConversationUsers.Add(targetCU);
+        conversation.ConversationUsers.Add(senderCu);
+        conversation.ConversationUsers.Add(targetCu);
         await appDbContext.Conversations.AddAsync(conversation);
         await appDbContext.SaveChangesAsync();
         return conversation;

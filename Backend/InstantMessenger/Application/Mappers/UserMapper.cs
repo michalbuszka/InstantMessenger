@@ -17,7 +17,7 @@ namespace InstantMessenger.Application.Mappers
             return user;
         }
 
-        public static void UpdateUser(User user, UserDTO.UserSettingsDTO userSettings)
+        public static void UpdateUser(User user, UserDto.UserSettingsDto userSettings)
         {
             if (userSettings.Email is not null)
                 user.Email = userSettings.Email;

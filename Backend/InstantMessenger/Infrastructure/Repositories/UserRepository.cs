@@ -6,46 +6,41 @@ using System.Text;
 
 namespace InstantMessenger.Infrastructure.Repositories
 {
-    public sealed class UserRepository
+    public sealed class UserRepository(AppDbContext appDbContext)
     {
-        private readonly AppDbContext _appDbContext;
-        public UserRepository(AppDbContext appDbContext)
-        {
-            _appDbContext = appDbContext;
-        }
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
-            return await _appDbContext.Users.FindAsync(id);
+            return await appDbContext.Users.FindAsync(id);
         }
         public async Task AddUserAsync(User user)
         {
-            _appDbContext.Users.Add(user);
-            await _appDbContext.SaveChangesAsync();
+            appDbContext.Users.Add(user);
+            await appDbContext.SaveChangesAsync();
         }
         
         public async Task<bool> IsUsernameAvailableAsync(string username)
         {
-            return !_appDbContext.Users.Any(u => u.Username == username);
+            return !appDbContext.Users.Any(u => u.Username == username);
         }
         
         public async Task<User?> GetUserByUsernameAsync(string? username)
         {
-            return await _appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+            return await appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
         
         public async Task SaveUserAsync()
         {
-            await _appDbContext.SaveChangesAsync();
+            await appDbContext.SaveChangesAsync();
         }
         
         public async Task<List<User>> GetUserByNickQuery(string nickQuery)
         {
-            return await _appDbContext.Users.Where(u => u.Nick.Contains(nickQuery)).ToListAsync();
+            return await appDbContext.Users.Where(u => u.Nick.Contains(nickQuery)).ToListAsync();
         }
         
         public async Task<User?> GetUserByRefreshToken(string refreshToken)
         {
-            return await _appDbContext.Users.Where(u => u.RefreshToken.Equals(refreshToken)).FirstOrDefaultAsync();
+            return await appDbContext.Users.Where(u => u.RefreshToken.Equals(refreshToken)).FirstOrDefaultAsync();
         }
         
         

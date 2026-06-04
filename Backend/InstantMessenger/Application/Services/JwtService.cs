@@ -7,20 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace InstantMessenger.Application.Services;
 
-public sealed class JwtService
+public sealed class JwtService(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-    public JwtService(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public string GenerateToken(string username)
     {
-        var issuer = _configuration["JwtConfig:Issuer"]!;
-        var audience = _configuration["JwtConfig:Audience"];
-        var key = _configuration["JwtConfig:Key"];
-        var tokenValidityMins = _configuration["JwtConfig:TokenValidityMins"];
+        var issuer = configuration["JwtConfig:Issuer"]!;
+        var audience = configuration["JwtConfig:Audience"];
+        var key = configuration["JwtConfig:Key"];
+        var tokenValidityMins = configuration["JwtConfig:TokenValidityMins"];
         var tokenExpiryTimeStamp = DateTime.UtcNow.AddMinutes(Convert.ToDouble(tokenValidityMins));
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -40,10 +34,10 @@ public sealed class JwtService
     
     public string GenerateRefreshToken(string username)
     {
-        var issuer = _configuration["JwtConfig:Issuer"]!;
-        var audience = _configuration["JwtConfig:Audience"];
-        var key = _configuration["JwtConfig:Key"];
-        var refreshTokenValidityDays = _configuration["JwtConfig:RefreshTokenValidityDays"];
+        var issuer = configuration["JwtConfig:Issuer"]!;
+        var audience = configuration["JwtConfig:Audience"];
+        var key = configuration["JwtConfig:Key"];
+        var refreshTokenValidityDays = configuration["JwtConfig:RefreshTokenValidityDays"];
         var tokenExpiryTimeStamp = DateTime.UtcNow.AddDays(Convert.ToDouble(14 * Convert.ToDouble(refreshTokenValidityDays)));
 
         var tokenDescriptor = new SecurityTokenDescriptor

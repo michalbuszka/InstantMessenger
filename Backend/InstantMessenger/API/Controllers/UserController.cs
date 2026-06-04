@@ -11,7 +11,7 @@ public class UserController(UserService userService) : ControllerBase
 {
     [Authorize]
     [HttpPost("updateUserData")]
-    public async Task<IActionResult> UpdateUserData([FromBody] UserDTO.UserSettingsDTO userSettings)
+    public async Task<IActionResult> UpdateUserData([FromBody] UserDto.UserSettingsDto userSettings)
     {
         var username = User.Identity?.Name;
         if (await userService.UpdateUserDataAsync(username, userSettings))
