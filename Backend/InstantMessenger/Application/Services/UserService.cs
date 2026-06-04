@@ -116,7 +116,7 @@ namespace InstantMessenger.Application.Services
             var newRefreshToken = jwtService.GenerateRefreshToken(user.Username);
             user.RefreshToken = newRefreshToken;
             await userRepository.SaveUserAsync();
-            return new Tokens(newToken, newRefreshToken);
+            return new Tokens(user.Id.ToString(), newToken, newRefreshToken);
         }
         
         public async Task LogoutUserAsync(string refreshToken)

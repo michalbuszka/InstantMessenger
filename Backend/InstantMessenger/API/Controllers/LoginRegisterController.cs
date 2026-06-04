@@ -63,7 +63,7 @@ namespace InstantMessenger.API.Controllers
                 Expires = DateTime.UtcNow.AddDays(7) 
             };
             Response.Cookies.Append("refreshToken", tokens.RefreshToken, cookieOptions);
-            return Ok(new {Token = tokens.Token});
+            return Ok(new {Token = tokens.Token, Id = tokens.id});
         }
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()

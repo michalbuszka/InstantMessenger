@@ -5,7 +5,16 @@ const api = axios.create({
   withCredentials: true, 
 });
 
-let accessToken = ''; 
+let accessToken = '';
+let userId = '';
+
+export const getUserId = () => {
+  return userId;
+}
+
+const setUserId = (uId : string) => {
+  userId = uId;
+}
 
 export const setAccessToken = (token: string) => {
   accessToken = token;
@@ -15,6 +24,7 @@ export const getAccessToken = async () => {
   if (accessToken.length<=0)
   {
     const result = await api.post('/api/LoginRegister/refresh');
+    setUserId(result.data.id);
     if (result.status == 401)
     {
         location.href='/login';
@@ -47,9 +57,9 @@ api.interceptors.response.use(
       try {
         const response = await axios.post('http://localhost:5199/api/LoginRegister/refresh', {}, { withCredentials: true });
         const newAccessToken = response.data.token;
+        setUserId(response.data.id);
         setAccessToken(newAccessToken);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-
         return api(originalRequest); 
       } catch (refreshError) {
         window.location.href = '/login';
