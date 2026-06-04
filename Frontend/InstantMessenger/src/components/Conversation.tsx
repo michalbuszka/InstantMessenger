@@ -13,16 +13,22 @@ interface User {
 }
 
 function Conversation() {
-    const [user, setUser] = useState<User | null>(null);
+    const initUser : User = {
+        id: '',
+        avatar: '',
+        nick: 'Login'
+    }
+    const [user, setUser] = useState<User | null>(initUser);
     const messageRef = useRef<HTMLInputElement>(null);
-    const [connection, setConnection] = useState<HubConnection>(null);
+    const [connection, setConnection] = useState<HubConnection>();
     const getUser = async (id: string) => {
         const response = await api.get(`/api/User/getUser/${id}`);
         setUser(response.data);
     }
     const sendMessage = () => {
         const messageContent = messageRef.current?.value;
-        connection.send("SendMessage", id, messageContent);
+        if (connection)
+            connection.send("SendMessage", id, messageContent);
     }
     const connectToSignalR = (accessToken : string) => {
         const newConnection = new HubConnectionBuilder()
