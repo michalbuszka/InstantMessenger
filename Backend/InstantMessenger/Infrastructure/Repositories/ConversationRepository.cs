@@ -12,6 +12,7 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
             .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == sender.Id))
             .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == target.Id))
             .Include(c => c.ConversationUsers)
+            .Include(c => c.Messages)
             .FirstOrDefaultAsync();
     }
 
@@ -41,5 +42,13 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
     {
         conversation.Messages.Add(message);
         await appDbContext.SaveChangesAsync();
+    }
+
+    public List<Message> GetLastNMessages(Conversation conversation, int n)
+    {
+        return conversation.Messages
+            .OrderByDescending(m => m.date) 
+            .Take(n)                        
+            .ToList();
     }
 }

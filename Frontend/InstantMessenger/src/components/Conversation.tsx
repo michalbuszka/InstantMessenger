@@ -1,6 +1,6 @@
 import '../Styles/Global.css'
 import '../Styles/Conversation.css'
-import Message from '../components/Message.tsx';
+import MessageComponent from '../components/Message.tsx'; // Zmiana nazwy importu, aby nie gryzła się z interfejsem Message
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import api, { getAccessToken, getUserId } from '../api/api.tsx';
@@ -28,67 +28,92 @@ function Conversation() {
     const [user, setUser] = useState<User | null>(initUser);
     const [messagesList, setMessagesList] = useState<Message[]>([])
     const messageRef = useRef<HTMLInputElement>(null);
-    const [connection, setConnection] = useState<HubConnection>();
+    const [connection, setConnection] = useState<HubConnection | null>(null);
+    const { id } = useParams<{ id: string }>();
+
     const getUser = async (id: string) => {
         const response = await api.get(`/api/User/getUser/${id}`);
         setUser(response.data);
     }
+    
+    const getMessages = async (currentId: string) => {
+        const result = await api.get(`/api/Conversation/messages/${currentId}`);
+        setMessagesList(result.data.reverse());
+    }
+
     const sendMessage = () => {
         const messageContent = messageRef.current?.value;
-        if (connection)
+        if (connection && messageContent?.trim()) {
             connection.send("SendMessage", id, messageContent);
-    }
-    const connectToSignalR = (accessToken : string) => {
-        const newConnection = new HubConnectionBuilder()
-            .withUrl('http://localhost:5199/conversationHub', {
-                accessTokenFactory: () => accessToken
-            })
-            .withAutomaticReconnect()
-            .configureLogging(LogLevel.Information)
-            .build();
-        setConnection(newConnection);
-    }
-    const connect = async () => {
-        connectToSignalR(await getAccessToken());
-    }
-    useEffect(() => {
-        connect();
-    }, []);
-    const { id } = useParams<{ id: string }>();
-    useEffect(() => {
-        if (id != null)
-            getUser(id);
-    }, [id])
-    useEffect(() => {
-        if (connection) {
-            connection.start()
-                .then(result => {
-                    connection.on('ReceiveMessage', (userId, nick, messageContent, date) => {
-                        const newMessage : Message = {
-                            senderId: userId,
-                            nick: nick,
-                            content: messageContent,
-                            date: date
-                        }
-                        setMessagesList(messagesList => [...messagesList, newMessage])
-                    });
-                })
-                .catch(e => console.log('Błąd połączenia: ', e));
+            if (messageRef.current) {
+                messageRef.current.value = "";
+            }
         }
+    }
+
+    useEffect(() => {
+        let isMounted = true;
+        
+        const startConnection = async () => {
+            const token = await getAccessToken();
+            const newConnection = new HubConnectionBuilder()
+                .withUrl('http://localhost:5199/conversationHub', {
+                    accessTokenFactory: () => token
+                })
+                .withAutomaticReconnect()
+                .configureLogging(LogLevel.Information)
+                .build();
+
+            try {
+                await newConnection.start();
+                if (isMounted) {
+                    setConnection(newConnection);
+                }
+            } catch (err) {
+                console.log('Błąd połączenia SignalR: ', err);
+            }
+        };
+
+        startConnection();
 
         return () => {
+            isMounted = false;
             if (connection) {
-                connection.off('ReceiveMessage');
                 connection.stop();
             }
         };
+    }, []);
+
+    useEffect(() => {
+        if (id) {
+            setMessagesList([]);
+            getUser(id);
+            getMessages(id);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (!connection) return;
+
+        connection.on('ReceiveMessage', (userId, nick, messageContent, date) => {
+            const newMessage : Message = {
+                senderId: userId,
+                nick: nick,
+                content: messageContent,
+                date: date
+            }
+            setMessagesList(prevMessages => [...prevMessages, newMessage]);
+        });
+
+        return () => {
+            connection.off('ReceiveMessage');
+        };
     }, [connection]);
+
     const getMessageClass = (senderId : string) => {
-        console.log(getUserId() + " " + senderId);
-        if (senderId === getUserId())
-            return 'myMessage';
-        return 'otherMessage';
+        return senderId === getUserId() ? 'myMessage' : 'otherMessage';
     }
+
     return (
         <div className="conversation">
             <div className='conversationHeader'>
@@ -99,16 +124,22 @@ function Conversation() {
             </div>
             <div className="messages">
                 {
-                    messagesList.map((message, key) => {
-                        return(
-                        <>
-                            <Message sender={message.nick} content={message.content} messageClass={getMessageClass(message.senderId)} date={message.date}/>
-                        </>)
-                    })
+                    messagesList.map((message, key) => (
+                        // Używaj unikalnego klucza (np. połączenie id i daty), unikaj pustego fragmentu <> w mapie
+                        <MessageComponent 
+                            key={key} 
+                            sender={message.nick} 
+                            content={message.content} 
+                            messageClass={getMessageClass(message.senderId)} 
+                            date={message.date}
+                        />
+                    ))
                 }
             </div>
             <div className="messageType">
-                <input ref={messageRef} type="text" placeholder="Type a message..." />
+                <input ref={messageRef} type="text" placeholder="Type a message..." onKeyDown={e => {
+                    if (e.key === 'Enter') sendMessage();
+                }} />
                 <button onClick={sendMessage}>Send</button>
             </div>
         </div>
