@@ -38,7 +38,8 @@ function Conversation() {
     
     const getMessages = async (currentId: string) => {
         const result = await api.get(`/api/Conversation/messages/${currentId}`);
-        setMessagesList(result.data.reverse());
+        const sorted = result.data.sort((a: Message, b: Message) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        setMessagesList(sorted);
     }
 
     const sendMessage = () => {
@@ -111,6 +112,15 @@ function Conversation() {
         };
     }, [connection]);
 
+    const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        const el = messagesContainerRef.current;
+        if (!el) return;
+        // przewiń na dół po aktualizacji listy wiadomości
+        el.scrollTop = el.scrollHeight;
+    }, [messagesList]);
+
     const getMessageClass = (senderId : string) => {
         return senderId === getUserId() ? 'myMessage' : 'otherMessage';
     }
@@ -123,7 +133,7 @@ function Conversation() {
                 </div>
                 <h2>{user?.nick}</h2>
             </div>
-            <div className="messages">
+            <div className="messages" ref={messagesContainerRef}>
                 {
                     messagesList.map((message, key) => (
                         // Używaj unikalnego klucza (np. połączenie id i daty), unikaj pustego fragmentu <> w mapie
