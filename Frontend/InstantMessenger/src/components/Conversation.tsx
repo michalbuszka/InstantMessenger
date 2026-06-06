@@ -44,8 +44,8 @@ function Conversation() {
     const sendMessage = () => {
         const messageContent = messageRef.current?.value;
         if (connection && messageContent?.trim()) {
-            connection.send("SendMessage", id, messageContent);
             if (messageRef.current) {
+                connection.send("SendMessage", id, messageContent);
                 messageRef.current.value = "";
             }
         }
@@ -102,6 +102,7 @@ function Conversation() {
                 content: messageContent,
                 date: date
             }
+            console.log(newMessage);
             setMessagesList(prevMessages => [...prevMessages, newMessage]);
         });
 

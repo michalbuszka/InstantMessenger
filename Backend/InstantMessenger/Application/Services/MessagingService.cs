@@ -11,7 +11,7 @@ public sealed class MessagingService(ConversationRepository conversationReposito
     {
         var sendMsg = new List<Task>();
         foreach (var user in conversation.ConversationUsers)
-            sendMsg.Add(clients.User(user.User.Username).SendAsync("ReceiveMessage", message.SenderId, message.Nick, message.Content, message.Date));
+            sendMsg.Add(clients.User(user.User.Id.ToString()).SendAsync("ReceiveMessage", message.SenderId, message.Nick, message.Content, message.Date));
         await Task.WhenAll(sendMsg);
     }
     
@@ -28,13 +28,13 @@ public sealed class MessagingService(ConversationRepository conversationReposito
         var date = DateTimeOffset.UtcNow;
         var message = new Message { SenderId = senderCu.Id, Content = msgContent, ConversationId = conversation.Id, date = date};
         await conversationRepository.AddMessage(conversation, message);
-        await NotifyUsers(new MessageDto(senderUserId.ToString(), message.Sender.Nick, message.Content, date.ToString()), conversation, clients);
+        await NotifyUsers(new MessageDto(senderUserId.ToString(), senderCu.Nick, message.Content, date.ToString()), conversation, clients);
     }
 
-    public async Task<List<MessageDto>> GetMessages(string username, Guid userId)
+    public async Task<List<MessageDto>> GetMessages(Guid user1Id, Guid user2Id)
     {
-        var user1 = await userRepository.GetUserByUsernameAsync(username);
-        var user2 = await userRepository.GetUserByIdAsync(userId);
+        var user1 = await userRepository.GetUserByIdAsync(user1Id);
+        var user2 = await userRepository.GetUserByIdAsync(user2Id);
         if (user1 == null || user2 == null)
         {
             throw new Exception("Error!");

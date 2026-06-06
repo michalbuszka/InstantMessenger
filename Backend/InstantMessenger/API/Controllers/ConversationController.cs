@@ -12,12 +12,11 @@ public class ConversationController(MessagingService messagingService) : Control
     [HttpGet("messages/{id}")]
     public async Task<IActionResult> GetMessages(string id)
     {
-        var username = User.Identity?.Name;
-        if (username==null)
-            return BadRequest();
         try
         {
-            return Ok(await messagingService.GetMessages(username, Guid.Parse(id)));
+            var id1 = Guid.Parse(User.Identity?.Name);
+            var id2 = Guid.Parse(id);
+            return Ok(await messagingService.GetMessages(id1, id2));
         }
         catch (Exception e)
         {

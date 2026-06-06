@@ -9,7 +9,7 @@ namespace InstantMessenger.Application.Services;
 
 public sealed class JwtService(IConfiguration configuration)
 {
-    public string GenerateToken(string username)
+    public string GenerateToken(Guid id)
     {
         var issuer = configuration["JwtConfig:Issuer"]!;
         var audience = configuration["JwtConfig:Audience"];
@@ -19,7 +19,7 @@ public sealed class JwtService(IConfiguration configuration)
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
+            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, id.ToString()) }),
             Expires = tokenExpiryTimeStamp,
             Issuer = issuer,
             Audience = audience,
@@ -32,7 +32,7 @@ public sealed class JwtService(IConfiguration configuration)
         return tokenHandler.WriteToken(token);
     }
     
-    public string GenerateRefreshToken(string username)
+    public string GenerateRefreshToken(Guid id)
     {
         var issuer = configuration["JwtConfig:Issuer"]!;
         var audience = configuration["JwtConfig:Audience"];
@@ -42,7 +42,7 @@ public sealed class JwtService(IConfiguration configuration)
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) }),
+            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, id.ToString()) }),
             Expires = tokenExpiryTimeStamp,
             Issuer = issuer,
             Audience = audience,

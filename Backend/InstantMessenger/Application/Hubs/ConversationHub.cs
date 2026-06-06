@@ -1,7 +1,6 @@
 using InstantMessenger.Application.Services;
 using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 
 namespace InstantMessenger.Application.Hubs;
@@ -11,11 +10,13 @@ public class ConversationHub(MessagingService messagingService, UserRepository u
 {
     public async Task SendMessage(string userId, string messageContent)
     {
-        var senderLogin = Context.UserIdentifier;
-        var user = await userRepository.GetUserByUsernameAsync(senderLogin);
-        var targetUser = await userRepository.GetUserByIdAsync(Guid.Parse(userId));
-        if (user is null || targetUser is null)
-            return;
-        await messagingService.SendMessage(user.Id, targetUser.Id, messageContent, Clients);
+        try
+        {
+            await messagingService.SendMessage(Guid.Parse(Context.UserIdentifier), Guid.Parse(userId), messageContent, Clients);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 }

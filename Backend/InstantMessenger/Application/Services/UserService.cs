@@ -38,8 +38,8 @@ namespace InstantMessenger.Application.Services
             var passwordHash = passwordHasher.HashPassword(user, registerRequest.Password);
             user.PasswordHash = passwordHash;
             await userRepository.AddUserAsync(user);
-            var token = jwtService.GenerateToken(user.Username);
-            var refreshToken = jwtService.GenerateRefreshToken(user.Username);
+            var token = jwtService.GenerateToken(user.Id);
+            var refreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = refreshToken;
             await userRepository.SaveUserAsync();
             loginRegisterResponse = new LoginRegisterResponse(0, messages.ToArray(), token);
@@ -73,17 +73,17 @@ namespace InstantMessenger.Application.Services
                 loginRegisterResponse = new(1, messages.ToArray(), string.Empty);
                 return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, string.Empty);
             }
-            var token = jwtService.GenerateToken(user.Id.ToString());
-            var refreshToken = jwtService.GenerateRefreshToken(loginRequest.Username);
+            var token = jwtService.GenerateToken(user.Id);
+            var refreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = refreshToken;
             await userRepository.SaveUserAsync();
             loginRegisterResponse = new(0, messages.ToArray(), token);
             return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);;
         }
 
-        public async Task<bool> UpdateUserDataAsync(string? username, UserSettingsDto userSettings)
+        public async Task<bool> UpdateUserDataAsync(Guid id, UserSettingsDto userSettings)
         {
-            var user = await userRepository.GetUserByUsernameAsync(username);
+            var user = await userRepository.GetUserByIdAsync(id);
             if (user == null)
                 return false;
             UserMapper.UpdateUser(user, userSettings);
@@ -91,9 +91,9 @@ namespace InstantMessenger.Application.Services
             return true;
         }
 
-        public async Task<UserSettingsDto?> GetUserDataAsync(string? username)
+        public async Task<UserSettingsDto?> GetUserDataAsync(Guid id)
         {
-            var user = await userRepository.GetUserByUsernameAsync(username);
+            var user = await userRepository.GetUserByIdAsync(id);
             if (user == null)
                 return null;
             return new UserSettingsDto(user.Email, user.FirstName, user.LastName, user.Nick, user.Avatar);
@@ -102,6 +102,8 @@ namespace InstantMessenger.Application.Services
         public async Task<List<ContactDto>?> GetUsersByNickQuery(string? nickQuery)
         {
             List<ContactDto> contacts = new();
+            if (nickQuery == null)
+                return contacts;
             var users = await userRepository.GetUserByNickQuery(nickQuery);
             contacts = users.Select(u => new ContactDto(u.Id.ToString(), u.Nick, u.Avatar!)).ToList();
             return contacts;
@@ -112,8 +114,8 @@ namespace InstantMessenger.Application.Services
             var user = await userRepository.GetUserByRefreshToken(refreshToken);
             if (user == null)
                 return null;
-            var newToken = jwtService.GenerateToken(user.Username);
-            var newRefreshToken = jwtService.GenerateRefreshToken(user.Username);
+            var newToken = jwtService.GenerateToken(user.Id);
+            var newRefreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = newRefreshToken;
             await userRepository.SaveUserAsync();
             return new Tokens(user.Id.ToString(), newToken, newRefreshToken);
@@ -128,9 +130,9 @@ namespace InstantMessenger.Application.Services
             await userRepository.SaveUserAsync();
         }
 
-        public async Task<ContactDto> GetUserById(string Id)
+        public async Task<ContactDto?> GetUserById(Guid Id)
         {
-            var user = await userRepository.GetUserByIdAsync(Guid.Parse(Id));
+            var user = await userRepository.GetUserByIdAsync(Id);
             if (user is null)
                 return null;
             return new ContactDto(user.Id.ToString(), user.Nick, user.Avatar!);

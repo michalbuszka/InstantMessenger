@@ -13,20 +13,35 @@ public class UserController(UserService userService) : ControllerBase
     [HttpPost("updateUserData")]
     public async Task<IActionResult> UpdateUserData([FromBody] UserSettingsDto userSettings)
     {
-        var username = User.Identity?.Name;
-        if (await userService.UpdateUserDataAsync(username, userSettings))
-            return Ok();
+        try
+        {
+            var id = Guid.Parse(User.Identity?.Name);
+            if (await userService.UpdateUserDataAsync(id, userSettings))
+                return Ok();
+        }
+        catch (Exception e)
+        {
+
+        }
         return BadRequest();
     }   
     [Authorize]
     [HttpGet("getUserData")]
     public async Task<IActionResult> GetUserData()
     {
-        var username = User.Identity?.Name;
-        var data = await userService.GetUserDataAsync(username);
-        if (data == null)
-            return BadRequest();
-        return Ok(data);
+        try
+        {
+            var id = Guid.Parse(User.Identity?.Name);
+            var data = await userService.GetUserDataAsync(id);
+            if (data == null)
+                return BadRequest();
+            return Ok(data);
+        }
+        catch (Exception e)
+        {
+            
+        }
+        return BadRequest();
     }  
     [HttpGet("getUserContacts/{nickQuery?}")]
     public async Task<IActionResult> GetUserContacts(string? nickQuery)
@@ -37,6 +52,17 @@ public class UserController(UserService userService) : ControllerBase
     [HttpGet("getUser/{id}")]
     public async Task<IActionResult> GetUser(string id)
     {
-        return Ok(await userService.GetUserById(id));
+        try
+        {
+            var Id = Guid.Parse(id);
+            return Ok(await userService.GetUserById(Id));
+        }
+        catch (Exception e)
+        {
+            
+        }
+
+        return BadRequest();
+
     }  
 }

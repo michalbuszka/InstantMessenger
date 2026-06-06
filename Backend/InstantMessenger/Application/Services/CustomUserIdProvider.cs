@@ -7,9 +7,9 @@ public sealed class CustomUserIdProvider : IUserIdProvider
 {
     public string? GetUserId(HubConnectionContext connection)
     {
-        var username = connection.User?.FindFirst("unique_name")?.Value;
-        if (string.IsNullOrEmpty(username))
-            username = connection.User?.FindFirst(ClaimTypes.Name)?.Value;
-        return username;
+        var id = connection.User?.FindFirst("unique_name")?.Value;
+        if (string.IsNullOrEmpty(id))
+            id = connection.User?.FindFirst(ClaimTypes.Name)?.Value;
+        return id;
     }
 }
