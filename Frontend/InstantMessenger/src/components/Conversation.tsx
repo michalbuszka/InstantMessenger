@@ -1,6 +1,6 @@
 import '../Styles/Global.css'
 import '../Styles/Conversation.css'
-import MessageComponent from '../components/Message.tsx'; // Zmiana nazwy importu, aby nie gryzła się z interfejsem Message
+import MessageComponent from '../components/Message.tsx'; 
 import { useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import api, { getAccessToken, getUserId } from '../api/api.tsx';
@@ -117,7 +117,6 @@ function Conversation() {
     useEffect(() => {
         const el = messagesContainerRef.current;
         if (!el) return;
-        // przewiń na dół po aktualizacji listy wiadomości
         el.scrollTop = el.scrollHeight;
     }, [messagesList]);
 

@@ -41,7 +41,7 @@ namespace InstantMessenger.Application.Services
             var token = jwtService.GenerateToken(user.Id);
             var refreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = refreshToken;
-            await userRepository.SaveUserAsync();
+            await userRepository.SaveChangesAsync();
             loginRegisterResponse = new LoginRegisterResponse(0, messages.ToArray(), token);
             return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);
         }
@@ -76,7 +76,7 @@ namespace InstantMessenger.Application.Services
             var token = jwtService.GenerateToken(user.Id);
             var refreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = refreshToken;
-            await userRepository.SaveUserAsync();
+            await userRepository.SaveChangesAsync();
             loginRegisterResponse = new(0, messages.ToArray(), token);
             return new LoginRegisterResponseWithRefreshToken(loginRegisterResponse, refreshToken);;
         }
@@ -87,7 +87,7 @@ namespace InstantMessenger.Application.Services
             if (user == null)
                 return false;
             UserMapper.UpdateUser(user, userSettings);
-            await userRepository.SaveUserAsync();
+            await userRepository.SaveChangesAsync();
             return true;
         }
 
@@ -117,7 +117,7 @@ namespace InstantMessenger.Application.Services
             var newToken = jwtService.GenerateToken(user.Id);
             var newRefreshToken = jwtService.GenerateRefreshToken(user.Id);
             user.RefreshToken = newRefreshToken;
-            await userRepository.SaveUserAsync();
+            await userRepository.SaveChangesAsync();
             return new Tokens(user.Id.ToString(), newToken, newRefreshToken);
         }
         
@@ -127,7 +127,7 @@ namespace InstantMessenger.Application.Services
             if (user == null)
                 return;
             user.RefreshToken = string.Empty;
-            await userRepository.SaveUserAsync();
+            await userRepository.SaveChangesAsync();
         }
 
         public async Task<ContactDto?> GetUserById(Guid Id)

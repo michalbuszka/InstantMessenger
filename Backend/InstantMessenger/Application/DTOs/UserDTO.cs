@@ -8,3 +8,5 @@ public record UserSettingsDto(
     string? Avatar);
 
 public record ContactDto(string Id, string Nick, string Avatar);
+
+public record EditUserNickDto(string id, string newNick);

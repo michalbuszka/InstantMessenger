@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 interface User 
 {
     id : string,
-    avatar: string,
-    nick: string
+    nick: string,
+    avatar: string
 }
 
 function ConversationsList() {

@@ -28,7 +28,7 @@ namespace InstantMessenger.Infrastructure.Repositories
             return await appDbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
         
-        public async Task SaveUserAsync()
+        public async Task SaveChangesAsync()
         {
             await appDbContext.SaveChangesAsync();
         }
@@ -42,7 +42,5 @@ namespace InstantMessenger.Infrastructure.Repositories
         {
             return await appDbContext.Users.Where(u => u.RefreshToken.Equals(refreshToken)).FirstOrDefaultAsync();
         }
-        
-        
     }
 }

@@ -1,3 +1,4 @@
+using InstantMessenger.Application.DTOs.User;
 using InstantMessenger.Application.DTOs.User.Messaging;
 using InstantMessenger.Domain.Entities;
 using InstantMessenger.Infrastructure.Repositories;
@@ -47,6 +48,30 @@ public sealed class MessagingService(ConversationRepository conversationReposito
 
         var messages = conversationRepository.GetLastNMessages(conversation, 10);
         return messages.Select(m => new MessageDto(m.Sender.User.Id.ToString(), m.Sender.Nick, m.Content, m.date.ToString())).ToList();
-
     }
+
+    public async Task<List<ContactDto>> GetConversationContacts(Guid user1Id, Guid user2Id)
+    {
+        var user1 = await userRepository.GetUserByIdAsync(user1Id);
+        var user2 = await userRepository.GetUserByIdAsync(user2Id);
+        if (user1 == null || user2 == null)
+            throw new Exception("Error!");
+        var conversation = await conversationRepository.GetConversationAsync(user1, user2);
+        if (conversation is null)
+            throw new Exception("Error!");
+        return conversation.ConversationUsers.Select(u => new ContactDto(u.Id.ToString(), u.Nick, u.User.Avatar!)).ToList();
+    }
+    public async Task<bool> EditConversationUserNickname(Guid myId, Guid conversationUserId, string newNick)
+    {
+        var conversation = await conversationRepository.GetConversationFromConversationUserAndUserAsync(myId, conversationUserId);
+        if (conversation == null)
+            return false;
+        var cu = conversation.ConversationUsers.FirstOrDefault(cu => cu.Id == conversationUserId);
+        if (cu == null)
+            return false;
+        cu.Nick = newNick;
+        await userRepository.SaveChangesAsync();
+        return true;
+    }
+    
 }

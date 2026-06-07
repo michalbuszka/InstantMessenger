@@ -51,4 +51,15 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
             .Take(n)                        
             .ToList();
     }
+    
+    public async Task<Conversation?> GetConversationFromConversationUserAndUserAsync(Guid userId, Guid conversationUserId)
+    {
+        return await appDbContext.Conversations
+            .Where(c => !c.IsGroup)
+            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == userId))
+            .Where(c => c.ConversationUsers.Any(cu => cu.Id == conversationUserId))
+            .Include(c => c.ConversationUsers)
+            .FirstOrDefaultAsync();
+    }
+    
 }

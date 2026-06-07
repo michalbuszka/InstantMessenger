@@ -1,6 +1,6 @@
 import ConversationsList from "../components/ConversationList"
 import Conversation from "../components/Conversation"
-import FriendDetails from "../components/FriendDetails"
+import ConversationDetails from "../components/ConversationDetails.tsx"
 import '../Styles/Global.css'
 import '../Styles/Conversations.css'
 import { useEffect, useState } from "react"
@@ -9,8 +9,10 @@ import UserSettingsModal from "../modals/UserSettingsModal"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from 'react-toastify';
+import { useParams } from "react-router-dom"
 
 function Conversations() {
+    const { id } = useParams<{ id: string }>();
     const [isUserSettingsModalOpen, setIsUserSettingsModalOpen] = useState(false);
 
     const handleSaveSettings = async (data: any) => {
@@ -45,7 +47,7 @@ function Conversations() {
                 </div>
             </div>
             <Conversation />
-            <FriendDetails />
+            <ConversationDetails conversationId={id || ''}/>
         </div>
     )
 }
