@@ -7,6 +7,6 @@ public record UserSettingsDto(
     string? Nick,
     string? Avatar);
 
-public record ContactDto(string Id, string Nick, string Avatar);
+public record ContactDto(Guid Id, string Nick, string Avatar);
 
-public record EditUserNickDto(string id, string newNick);
+public record EditUserNickDto(Guid id, string newNick);

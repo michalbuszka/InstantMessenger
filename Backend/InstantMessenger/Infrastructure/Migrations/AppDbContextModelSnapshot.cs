@@ -24,11 +24,9 @@ namespace InstantMessenger.Infrastructure.Migrations
 
             modelBuilder.Entity("InstantMessenger.Domain.Entities.Conversation", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsGroup")
                         .HasColumnType("boolean");
@@ -44,8 +42,8 @@ namespace InstantMessenger.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("ConversationId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Nick")
                         .IsRequired()
@@ -65,19 +63,17 @@ namespace InstantMessenger.Infrastructure.Migrations
 
             modelBuilder.Entity("InstantMessenger.Domain.Entities.Message", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int>("ConversationId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uuid");
@@ -96,18 +92,16 @@ namespace InstantMessenger.Infrastructure.Migrations
 
             modelBuilder.Entity("InstantMessenger.Domain.Entities.Reaction", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Emoji")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MessageId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uuid");

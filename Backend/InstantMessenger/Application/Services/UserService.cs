@@ -105,7 +105,7 @@ namespace InstantMessenger.Application.Services
             if (nickQuery == null)
                 return contacts;
             var users = await userRepository.GetUserByNickQuery(nickQuery);
-            contacts = users.Select(u => new ContactDto(u.Id.ToString(), u.Nick, u.Avatar!)).ToList();
+            contacts = users.Select(u => new ContactDto(u.Id, u.Nick, u.Avatar!)).ToList();
             return contacts;
         }
 
@@ -135,7 +135,7 @@ namespace InstantMessenger.Application.Services
             var user = await userRepository.GetUserByIdAsync(Id);
             if (user is null)
                 return null;
-            return new ContactDto(user.Id.ToString(), user.Nick, user.Avatar!);
+            return new ContactDto(user.Id, user.Nick, user.Avatar!);
         }
     }
 }

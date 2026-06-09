@@ -1,8 +1,8 @@
 import '../Styles/Global.css'
 import '../Styles/Conversation.css'
 import MessageComponent from '../components/Message.tsx'; 
-import { useParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import api, { getAccessToken, getUserId } from '../api/api.tsx';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
@@ -16,7 +16,8 @@ interface Message {
     senderId: string,
     nick: string,
     content: string,
-    date: string
+    date: string,
+    conversationId: string
 }
 
 function Conversation() {
@@ -25,6 +26,7 @@ function Conversation() {
         avatar: '',
         nick: 'Login'
     }
+    const navigate = useNavigate();
     const [user, setUser] = useState<User | null>(initUser);
     const [messagesList, setMessagesList] = useState<Message[]>([])
     const messageRef = useRef<HTMLInputElement>(null);
@@ -96,15 +98,19 @@ function Conversation() {
     useEffect(() => {
         if (!connection) return;
 
-        connection.on('ReceiveMessage', (userId, nick, messageContent, date) => {
+        connection.on('ReceiveMessage', (userId, nick, messageContent, date, conversationId) => {
             const newMessage : Message = {
                 senderId: userId,
                 nick: nick,
                 content: messageContent,
-                date: date
+                date: date,
+                conversationId: conversationId
             }
-            console.log(newMessage);
             setMessagesList(prevMessages => [...prevMessages, newMessage]);
+            if (id != conversationId)
+            {
+                //navigate(`/${conversationId}`);
+            }
         });
 
         return () => {
@@ -135,7 +141,6 @@ function Conversation() {
             <div className="messages" ref={messagesContainerRef}>
                 {
                     messagesList.map((message, key) => (
-                        // Używaj unikalnego klucza (np. połączenie id i daty), unikaj pustego fragmentu <> w mapie
                         <MessageComponent 
                             key={key} 
                             sender={message.nick} 

@@ -16,7 +16,7 @@ namespace InstantMessenger.API.Controllers
             this._userService = userService;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> register([FromBody]  RegisterRequest registerLogin)
+        public async Task<IActionResult> Register([FromBody]  RegisterRequest registerLogin)
         {
             var response = await _userService.AddUserAsync(registerLogin);
             var cookieOptions = new CookieOptions
@@ -30,7 +30,7 @@ namespace InstantMessenger.API.Controllers
             return Ok(response.LoginRegisterResponse);
         }
         [HttpPost("login")]
-        public async Task<IActionResult> login([FromBody]  LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody]  LoginRequest loginRequest)
         {
             var response = await _userService.LoginUserAsync(loginRequest);
             var cookieOptions = new CookieOptions

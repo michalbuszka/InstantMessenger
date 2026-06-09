@@ -5,15 +5,20 @@ namespace InstantMessenger.Infrastructure.Repositories;
 
 public sealed class ConversationRepository(AppDbContext appDbContext)
 {
-    public async Task<Conversation?> GetConversationAsync(User sender, User target)
+    public async Task<Conversation?> GetPrivConversationAsync(Guid senderId, Guid userId)
     {
         return await appDbContext.Conversations
             .Where(c => !c.IsGroup)
-            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == sender.Id))
-            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == target.Id))
+            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == senderId))
+            .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == userId))
             .Include(c => c.ConversationUsers)
             .Include(c => c.Messages)
             .FirstOrDefaultAsync();
+    }
+    
+    public async Task<Conversation?> GetConversationByIdAsync(Guid id)
+    {
+        return await appDbContext.Conversations.Include(c => c.ConversationUsers).FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Conversation> AddPrivConversationAsync(User sender, User target)
@@ -44,12 +49,13 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
         await appDbContext.SaveChangesAsync();
     }
 
-    public List<Message> GetLastNMessages(Conversation conversation, int n)
+    public async Task<List<Message>> GetLastNMessages(Guid conversationId, int n)
     {
-        return conversation.Messages
-            .OrderByDescending(m => m.date) 
-            .Take(n)                        
-            .ToList();
+        return await appDbContext.Messages
+            .Include(m => m.Sender).ThenInclude(u => u.User)
+            .Where(m => m.ConversationId == conversationId).OrderByDescending(m => m.date) 
+            .Take(n)               
+            .ToListAsync();
     }
     
     public async Task<Conversation?> GetConversationFromConversationUserAndUserAsync(Guid userId, Guid conversationUserId)

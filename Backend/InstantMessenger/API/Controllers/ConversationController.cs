@@ -10,14 +10,13 @@ namespace InstantMessenger.API.Controllers;
 [Authorize]
 public class ConversationController(MessagingService messagingService) : ControllerBase
 {
-    [HttpGet("messages/{id}")]
-    public async Task<IActionResult> GetMessages(string id)
+    [HttpGet("messages/{conversatrionIdOrUserId}")]
+    public async Task<IActionResult> GetMessages(Guid conversatrionIdOrUserId)
     {
         try
         {
-            var id1 = Guid.Parse(User.Identity?.Name);
-            var id2 = Guid.Parse(id);
-            return Ok(await messagingService.GetMessages(id1, id2));
+            var myId = Guid.Parse(User.Identity?.Name);
+            return Ok(await messagingService.GetMessages(myId, conversatrionIdOrUserId));
         }
         catch (Exception e)
         {
@@ -30,9 +29,9 @@ public class ConversationController(MessagingService messagingService) : Control
     {
         try
         {
-            var id1 = Guid.Parse(User.Identity?.Name);
-            var id2 = Guid.Parse(id);
-            return Ok(await messagingService.GetConversationContacts(id1, id2));
+            var myId = Guid.Parse(User.Identity?.Name);
+            var conversationId = Guid.Parse(id);
+            return Ok(await messagingService.GetConversationContacts(myId, conversationId));
         }
         catch (Exception e)
         {
@@ -45,8 +44,7 @@ public class ConversationController(MessagingService messagingService) : Control
         try
         {
             var myId = Guid.Parse(User.Identity?.Name);
-            var editUserId = Guid.Parse(editUserNickDto.id);
-            return Ok(await messagingService.EditConversationUserNickname(myId, editUserId, editUserNickDto.newNick));
+            return Ok(await messagingService.EditConversationUserNickname(myId, editUserNickDto.id, editUserNickDto.newNick));
         }
         catch (Exception e)
         {
