@@ -44,7 +44,8 @@ public class ConversationController(MessagingService messagingService) : Control
         try
         {
             var myId = Guid.Parse(User.Identity?.Name);
-            return Ok(await messagingService.EditConversationUserNickname(myId, editUserNickDto.id, editUserNickDto.newNick));
+            await messagingService.EditConversationUserNickname(myId, editUserNickDto.id, editUserNickDto.newNick);
+            return Ok();
         }
         catch (Exception e)
         {

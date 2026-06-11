@@ -1,9 +1,10 @@
+using InstantMessenger.Application.Interfaces;
 using InstantMessenger.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InstantMessenger.Infrastructure.Repositories;
 
-public sealed class ConversationRepository(AppDbContext appDbContext)
+public sealed class ConversationRepository(AppDbContext appDbContext) : IConversationRepository
 {
     public async Task<Conversation?> GetPrivConversationAsync(Guid senderId, Guid userId)
     {
@@ -12,13 +13,14 @@ public sealed class ConversationRepository(AppDbContext appDbContext)
             .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == senderId))
             .Where(c => c.ConversationUsers.Any(cu => cu.User.Id == userId))
             .Include(c => c.ConversationUsers)
+            .ThenInclude(c => c.User)
             .Include(c => c.Messages)
             .FirstOrDefaultAsync();
     }
     
     public async Task<Conversation?> GetConversationByIdAsync(Guid id)
     {
-        return await appDbContext.Conversations.Include(c => c.ConversationUsers).FirstOrDefaultAsync(c => c.Id == id);
+        return await appDbContext.Conversations.Include(c => c.ConversationUsers).ThenInclude(u => u.User).FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<Conversation> AddPrivConversationAsync(User sender, User target)

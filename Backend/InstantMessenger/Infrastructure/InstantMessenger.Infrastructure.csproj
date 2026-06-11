@@ -21,11 +21,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\InstantMessenger.Domain.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\Application\InstantMessenger.Application.csproj" />
+    <ProjectReference Include="..\Domain\InstantMessenger.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,15 +1,15 @@
 ﻿using InstantMessenger.Application.DTOs.LoginRegister;
 using InstantMessenger.Application.DTOs.User;
+using InstantMessenger.Application.Interfaces;
 using InstantMessenger.Application.Mappers;
 using InstantMessenger.Application.Validators;
 using InstantMessenger.Domain.Entities;
-using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 
 namespace InstantMessenger.Application.Services
 {
     public sealed class UserService(
-        UserRepository userRepository,
+        IUserRepository userRepository,
         JwtService jwtService,
         IPasswordHasher<User> passwordHasher,
         RegisterValidator registerValidator,

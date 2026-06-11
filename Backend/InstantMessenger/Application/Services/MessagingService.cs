@@ -1,21 +1,13 @@
 using InstantMessenger.Application.DTOs.User;
 using InstantMessenger.Application.DTOs.User.Messaging;
+using InstantMessenger.Application.Interfaces;
 using InstantMessenger.Domain.Entities;
-using InstantMessenger.Infrastructure.Repositories;
 using Microsoft.AspNetCore.SignalR;
 
 namespace InstantMessenger.Application.Services;
 
-public sealed class MessagingService(ConversationRepository conversationRepository, UserRepository userRepository)
+public sealed class MessagingService(IConversationRepository conversationRepository, IUserRepository userRepository, IMessageNotifier messageNotifier)
 {
-    private async Task NotifyUsers(MessageDto message, Conversation conversation, IHubCallerClients clients)
-    {
-        var sendMsg = new List<Task>();
-        foreach (var user in conversation.ConversationUsers)
-            sendMsg.Add(clients.User(user.User.Id.ToString()).SendAsync("ReceiveMessage", message.SenderId,
-                message.Nick, message.Content, message.Date, conversation.Id));
-        await Task.WhenAll(sendMsg);
-    }
 
     public async Task SendMessage(Guid senderUserId, Guid userOrConversationId, string msgContent, IHubCallerClients clients)
     {
@@ -28,43 +20,47 @@ public sealed class MessagingService(ConversationRepository conversationReposito
                 var sender = await userRepository.GetUserByIdAsync(senderUserId);
                 var target = await userRepository.GetUserByIdAsync(senderUserId);
                 if (sender == null || target == null)
-                    return;
+                    throw new Exception("User or target user has not been found!");
                 conversation = await conversationRepository.AddPrivConversationAsync(sender, target);
             }
         }
         await SendMessageInExistingConversation(senderUserId, conversation.Id, msgContent, clients);
     }
 
-    private async Task SendMessageInExistingConversation(Guid senderUserId, Guid conversationid, string msgContent, IHubCallerClients clients)
+    private async Task SendMessageInExistingConversation(Guid senderUserId, Guid conversationId, string msgContent, IHubCallerClients clients)
     {
         var sender = await userRepository.GetUserByIdAsync(senderUserId);
         if (sender == null)
-            return;
-        var conversation = await conversationRepository.GetConversationByIdAsync(conversationid);
+            throw new Exception("User has not been found.");
+        var conversation = await conversationRepository.GetConversationByIdAsync(conversationId);
         if (conversation == null)
-            return;
+            throw new Exception("Conversation has not been found.");
         var senderCu = conversation.ConversationUsers.FirstOrDefault(u => u.User.Id == sender.Id);
         if (senderCu == null)
-            return;
+            throw new Exception("Conversation user has not not been found.");
         var date = DateTimeOffset.UtcNow;
         var message = new Message
             { SenderId = senderCu.Id, Content = msgContent, ConversationId = conversation.Id, date = date };
         await conversationRepository.AddMessage(conversation, message);
-        await NotifyUsers(new MessageDto(senderUserId, senderCu.Nick, message.Content, date.ToString()), conversation,
-            clients);
+        var userIds = conversation.ConversationUsers.Select(u => u.User.Id.ToString()).ToList();
+        await messageNotifier.NotifyUsers(new MessageDto(senderUserId, senderCu.Nick, message.Content, date.ToString()), userIds,
+            clients, conversationId);
     }
-    
-    public async Task<List<MessageDto>> GetMessages(Guid myId, Guid conversationIdOrUserId)
+
+    private async Task<Conversation> GetConversationFromConversationIdOrUserId(Guid myId, Guid conversationIdOrUserId)
     {
         var conversation = await conversationRepository.GetConversationByIdAsync(conversationIdOrUserId);
         if (conversation == null || !conversation.ConversationUsers.Any(cu => cu.User.Id == myId))
-        {
             conversation = await conversationRepository.GetPrivConversationAsync(myId, conversationIdOrUserId);
-        }
         if (conversation == null)
-        {
-            throw new Exception("Error!");
-        }
+            throw new Exception("Conversation not found or user is not in conversation.");
+        return conversation;
+    }
+    
+    
+    public async Task<List<MessageDto>> GetMessages(Guid myId, Guid conversationIdOrUserId)
+    {
+        var conversation = await GetConversationFromConversationIdOrUserId(myId, conversationIdOrUserId);
         var messages = await conversationRepository.GetLastNMessages(conversation.Id, 10);
         return messages.Select(m => new MessageDto(m.Sender.User.Id, m.Sender.Nick, m.Content, m.date.ToString()))
             .ToList();
@@ -72,27 +68,20 @@ public sealed class MessagingService(ConversationRepository conversationReposito
 
     public async Task<List<ContactDto>> GetConversationContacts(Guid myId, Guid conversationOrUserId)
     {
-        var conversation = await conversationRepository.GetConversationByIdAsync(conversationOrUserId);
-        if (conversation == null)
-        {
-            conversation = await conversationRepository.GetPrivConversationAsync(myId, conversationOrUserId);
-        }
-        if (conversation == null || !conversation.ConversationUsers.Any(cu => cu.User.Id == myId))
-            throw new Exception("Error!");
+        var conversation = await GetConversationFromConversationIdOrUserId(myId, conversationOrUserId);
         return conversation.ConversationUsers.Select(u => new ContactDto(u.Id, u.Nick, u.User.Avatar!)).ToList();
     }
 
-    public async Task<bool> EditConversationUserNickname(Guid myId, Guid conversationUserId, string newNick)
+    public async Task EditConversationUserNickname(Guid myId, Guid conversationUserId, string newNick)
     {
         var conversation =
             await conversationRepository.GetConversationFromConversationUserAndUserAsync(myId, conversationUserId);
         if (conversation == null)
-            return false;
+            throw new Exception("Convesation has not been found!");
         var cu = conversation.ConversationUsers.FirstOrDefault(cu => cu.Id == conversationUserId);
         if (cu == null)
-            return false;
+            throw new Exception("Conversation User has not been found!");
         cu.Nick = newNick;
         await userRepository.SaveChangesAsync();
-        return true;
     }
 }

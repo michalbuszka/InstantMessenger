@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using InstantMessenger.Application.Interfaces;
 
 namespace InstantMessenger.Infrastructure.Repositories
 {
-    public sealed class UserRepository(AppDbContext appDbContext)
+    public sealed class UserRepository(AppDbContext appDbContext) : IUserRepository
     {
         public async Task<User?> GetUserByIdAsync(Guid id)
         {

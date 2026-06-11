@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\InstantMessenger.Application.csproj" />
-    <ProjectReference Include="..\Domain\InstantMessenger.Domain.csproj" />
   </ItemGroup>
 
 </Project>
